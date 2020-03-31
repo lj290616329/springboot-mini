@@ -69,7 +69,7 @@ public class Admin implements Serializable {
     @JoinTable(name = "sys_admin_role",
             joinColumns = @JoinColumn(name = "aid"),
             inverseJoinColumns = @JoinColumn(name = "rid"))
-    @JsonBackReference
+    @JsonIgnore
     private Set<Role> roles = new HashSet<>(0);
 
 }

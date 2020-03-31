@@ -28,8 +28,11 @@ public class MenuUpdateReqVO {
     @ApiModelProperty(value = "菜单图标")
     private String icon;
 
-    @ApiModelProperty(value = "菜单权限标识，shiro 适配restful")
+    @ApiModelProperty(value = "菜单权限标识")
     private String perms;
+
+    @ApiModelProperty(value = "请求方式")
+    private String method;
 
     @ApiModelProperty(value = "接口地址")
     private String url;
@@ -37,9 +40,6 @@ public class MenuUpdateReqVO {
     @ApiModelProperty(value = "父级id")
     @NotNull(message = "所属菜单不能为空")
     private Integer pid;
-
-    @ApiModelProperty(value = "排序码")
-    private Integer orderNum;
 
     @ApiModelProperty(value = "菜单权限类型(1:目录;2:菜单;3:按钮)")
     @NotNull(message = "菜单权限类型不能为空")

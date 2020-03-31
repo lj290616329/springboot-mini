@@ -19,16 +19,17 @@
 <script type="text/html" id="toolbar">
     <div class="layui-btn-group">
         <button type="button" class="layui-btn" lay-event="addMenu">
-            <i class="layui-icon">&#xe608;</i> 添加
+            <i class="layui-icon layui-icon-addition"></i> 添加
         </button>
     </div>
 </script>
 <script type="text/html" id="form-body">
     <div class="panel-heading title"></div>
     <div class="layui-card-body">
-        <form class="layui-form " action="" lay-filter="deptInfo" style="width: 700px;margin-top: 10px"  autocomplete="off">
+        <form class="layui-form " style="width: 700px;margin-top: 10px"  autocomplete="off">
             <input name="id" hidden value="{{id}}"/>
             <input name="pid" hidden  value="{{pid}}"/>
+
             <div class="layui-form-item">
                 <label class="layui-form-label">类型</label>
                 <div class="layui-input-block">
@@ -37,24 +38,28 @@
                     <input type="radio" name="type" value="3" title="按钮"  lay-filter="radio-type">
                 </div>
             </div>
+
             <div class="layui-form-item">
                 <label class="layui-form-label">菜单名称</label>
                 <div class="layui-input-block">
                     <input type="name" name="name" placeholder="请输入菜单名称" autocomplete="off" class="layui-input" value="{{name}}">
                 </div>
             </div>
+
             <div class="layui-form-item">
                 <label class="layui-form-label">菜单图标</label>
                 <div class="layui-input-block">
                     <input type="text" id="iconPicker" name="icon" value="{{icon}}" lay-filter="iconPicker" class="hide">
                 </div>
             </div>
+
             <div class="layui-form-item">
                 <div class="layui-form-label ">所属菜单</div>
                 <div class="layui-input-block">
                     <input type="pidName" name="pidName" value="{{pidName}}"  placeholder="请选择所属菜单" autocomplete="off" class="layui-input" readonly="readonly" style="background:#eeeeee!important">
                 </div>
             </div>
+
             <div class="layui-form-item">
                 <label class="layui-form-label ">接口URL</label>
                 <div class="layui-input-block">
@@ -68,6 +73,14 @@
                     <input type="perms" name="perms" value="{{perms}}" placeholder="请输入授权标识,如果 sys:user:list" autocomplete="off" class="layui-input">
                 </div>
             </div>
+
+            <div class="layui-form-item menu-method" hidden>
+                <div class="layui-form-label">请求方式</div>
+                <div class="layui-input-block">
+                    <input type="method" name="method" value="{{method}}" placeholder="请输入请求方式，如 GET、POST" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
             <div class="layui-form-item">
                 <label class="layui-form-label">状态</label>
                 <div class="layui-input-block">
@@ -84,8 +97,8 @@
     </div>
 </script>
 <script type="text/html" id="tool">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
 </script>
 <script src="/layuiadmin/layui/layui.js"></script>
 <script src="/js/template.js"></script>

@@ -88,9 +88,6 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public Page<Role> pageInfo(RolePageReqVO vo) {
-		System.out.println(vo.toString());
-		System.out.println(null !=vo.getEndTime());
-
 		Pageable pageable = PageRequest.of(vo.getPageNum()-1, vo.getPageSize(), Sort.Direction.DESC,"id");
 		return roleRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
 			List<Predicate> predicates = new ArrayList<Predicate>();
@@ -103,7 +100,7 @@ public class RoleServiceImpl implements RoleService {
 				predicates.add(criteriaBuilder.greaterThan(root.get("createTime"),vo.getStartTime()));
 			}
 
-			if (null !=vo.getEndTime()){
+			if (null != vo.getEndTime()){
 				predicates.add(criteriaBuilder.lessThan(root.get("createTime"),vo.getEndTime()));
 			}
 			return criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()])).getRestriction();

@@ -12,7 +12,7 @@
     <div class="panel panel-default operation_user" hidden>
         <div class="panel-heading title"></div>
         <div class="layui-card-body">
-            <form class="layui-form " action="" lay-filter="deptInfo" style="width: 700px;margin-top: 10px">
+            <form class="layui-form "  autocomplete="off" action="" lay-filter="deptInfo" style="width: 700px;margin-top: 10px">
                 <input name="id" hidden/>
                 <div class="layui-form-item">
                     <label class="layui-form-label">账号名称</label>
@@ -32,7 +32,6 @@
                         <input type="password" name="password" placeholder="请输入密码" autocomplete="off" class="layui-input" >
                     </div>
                 </div>
-
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">状态</label>
@@ -60,7 +59,7 @@
                     <input type="text" id="loginname" class="layui-input"  autocomplete="off" placeholder="请输用户昵称">
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" class="layui-input" id="createTime" placeholder="创建时间">
+                    <input type="text" class="layui-input" id="createTime" autocomplete="off" placeholder="创建时间">
                 </div>
                 <div class="layui-input-inline layui-form">
                     <select  id="status"  >
@@ -96,8 +95,9 @@
 </script>
 <script type="text/html" id="tool">
     <a class="layui-btn  layui-btn-xs" lay-event="operationRole">赋予角色</a>
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+
 </script>
 <script src="/layuiadmin/layui/layui.js"></script>
 </html>
@@ -152,7 +152,6 @@
                 ,cols: [
                     [
                         {type: 'checkbox', fixed: 'left'},
-                        {field: 'id', title: 'ID', width: 300, sort: true},
                         {field: 'name', title: '名称', width: 130},
                         {field: 'loginName', title: '登录账号', width: 130},
                         {field: 'createTime', title: '创建时间'},
@@ -187,7 +186,7 @@
                 if(res.data.list !=null){
                     if(flag){laypageTable(res.data.totalElements);}
                 }
-            },"GET",false,false);
+            },"GET",'application/json; charset=UTF-8',false);
         };
         /**
          *获取一次数据
@@ -262,7 +261,7 @@
                 case 'del':
                     var userIds=[];
                     userIds.push(data.id);
-                    tipDialog(userIds,data.username);
+                    tipDialog(userIds,data.name);
                     break;
                 case 'edit':
                     console.log(data);
@@ -310,15 +309,15 @@
                                 $(getData).each(function (index,item) {
                                     roleIds.push(item.value);
                                 });
-
+                                console.log(JSON.stringify(roleIds));
                                 CoreUtil.sendAjax("/manager/admin/roles/"+data.id,JSON.stringify(roleIds),function (res) {
                                     layer.msg(res.msg);
                                     getTableData();
-                                },"PUT",false,false);
+                                },"PUT",'application/json; charset=UTF-8',false);
                                 layer.close(index);
                             }
                         });
-                    },"GET",false,false);
+                    },"GET",'application/json; charset=UTF-8',false);
 
                     break;
             }
@@ -330,7 +329,7 @@
         });
         var tipDialog=function (userIds,username) {
             layer.open({
-                content: '确定要删除'+username+"用户么?",
+                content: '确定要删除['+username+"]用户么?",
                 yes: function(index, layero){
                     layer.close(index); //如果设定了yes回调，需进行手工关闭
                     CoreUtil.sendAjax("/manager/admin",JSON.stringify(userIds),function (res) {

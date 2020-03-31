@@ -61,7 +61,7 @@
                     <input type="text" id="roleName" class="layui-input"  autocomplete="off" placeholder="请输入角色名称">
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" class="layui-input" id="createTime" placeholder="创建时间">
+                    <input type="text" class="layui-input" id="createTime" autocomplete="off" placeholder="创建时间">
                 </div>
                 <div class="layui-input-inline layui-form">
                     <select  id="status"  >
@@ -88,8 +88,8 @@
     </div>
 </script>
 <script type="text/html" id="tool">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
 </script>
 <script src="/layuiadmin/layui/layui.js"></script>
 <script>
@@ -140,6 +140,7 @@
                     [
                         {type: 'checkbox', fixed: 'left'},
                         {field: 'name', title: '角色名称'},
+                        {field: 'description', title: '描述'},
                         {
                             field: 'createTime', title: '创建时间', templet: function (item) {
                                 return CoreUtil.formattime(item.createTime);
@@ -160,7 +161,6 @@
                                 }
                             }
                         },
-                        {field: 'description', title: '描述'},
                         {title:'操作',width:250,toolbar:'#tool'}
                     ]
                 ]

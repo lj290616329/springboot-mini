@@ -27,7 +27,7 @@ public class MenuAddReqVO {
     @ApiModelProperty(value = "接口地址")
     private String url;
 
-    @ApiModelProperty(value = "请求方式 和url 配合使用 (我们用 路径匹配的方式做权限管理的时候用到)")
+    @ApiModelProperty(value = "请求方式")
     private String method;
 
     @ApiModelProperty(value = "父级id")

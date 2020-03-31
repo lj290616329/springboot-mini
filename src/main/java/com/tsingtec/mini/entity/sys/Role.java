@@ -50,11 +50,11 @@ public class Role implements Serializable {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "sys_role_menu",joinColumns = @JoinColumn(name = "rid"),inverseJoinColumns = @JoinColumn(name = "mid"))
-    @JsonManagedReference
+    @JsonIgnore
     private Set<Menu> menus = new HashSet<>(0);
 
     @ManyToMany(mappedBy = "roles", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JsonManagedReference
+    @JsonIgnore
     private Set<Admin> admins = new HashSet<>(0);
 
 

@@ -41,6 +41,8 @@ public class Menu implements Serializable {
 
     private Integer pid;
 
+    private String method;
+
     @Transient
     private String pidName;
 
@@ -56,7 +58,7 @@ public class Menu implements Serializable {
 
 
     @ManyToMany(mappedBy = "menus",fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonIgnore
     private Set<Role> roles = new HashSet<>(0);
 
     public Menu(){

@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class MenuServiceImpl implements MenuService {
@@ -147,10 +144,10 @@ public class MenuServiceImpl implements MenuService {
 		return menus;
 	}
 
-	private List<Menu> getMenu(Integer aid) {
+	private Set<Menu> getMenu(Integer aid) {
 		Admin admin = adminRepository.getOne(aid);
 		Set<Role> roles = admin.getRoles();
-		List<Menu> menus = new ArrayList<>();
+		Set<Menu> menus = new HashSet<>();
 		for(Role role:roles){
 			menus.addAll(role.getMenus());
 		}
@@ -160,11 +157,11 @@ public class MenuServiceImpl implements MenuService {
 
 	@Override
 	public List<MenuRespNode> menuTreeList(Integer aid) {
-		List<Menu> list = getMenu(aid);
+		Set<Menu> list = getMenu(aid);
 		return getTree(list,true);
 	}
 
-	private List<MenuRespNode> getTree(List<Menu> all, boolean type){
+	private List<MenuRespNode> getTree(Set<Menu> all, boolean type){
 
 		List<MenuRespNode> list=new ArrayList<>();
 		if (all==null||all.isEmpty()){
@@ -187,7 +184,7 @@ public class MenuServiceImpl implements MenuService {
 		return list;
 	}
 
-	private List<MenuRespNode>getChildAll(Integer id,List<Menu> all){
+	private List<MenuRespNode>getChildAll(Integer id,Set<Menu> all){
 
 		List<MenuRespNode> list=new ArrayList<>();
 		for(Menu menu:all){
@@ -202,7 +199,7 @@ public class MenuServiceImpl implements MenuService {
 		return list;
 	}
 
-	private List<MenuRespNode> getChildExcBtn(Integer id,List<Menu> all){
+	private List<MenuRespNode> getChildExcBtn(Integer id,Set<Menu> all){
 
 		List<MenuRespNode> list = new ArrayList<>();
 		for(Menu menu:all){
@@ -220,7 +217,8 @@ public class MenuServiceImpl implements MenuService {
 	@Override
 	public List<MenuRespNode> selectAllByTree() {
 		List<Menu> list = findAll();
-		return getTree(list,false);
+		Set<Menu> menus = new HashSet<>(list);
+		return getTree(menus,false);
 	}
 
 	@Override
@@ -232,6 +230,7 @@ public class MenuServiceImpl implements MenuService {
 	public List<MenuRespNode> selectAllMenuByTree(Integer menuId) {
 
 		List<Menu> list = findAll();
+
 		if(!list.isEmpty() && !StringUtils.isEmpty(menuId)){
 			for (Menu menu:list){
 				if (menu.getId().equals(menuId)){
@@ -240,13 +239,15 @@ public class MenuServiceImpl implements MenuService {
 				}
 			}
 		}
+
+		Set<Menu> menus = new HashSet<>(list);
 		List<MenuRespNode> result=new ArrayList<>();
 		//新增顶级目录是为了方便添加一级目录
 		MenuRespNode respNode = new MenuRespNode();
 		respNode.setId(0);
 		respNode.setTitle("默认顶级菜单");
 		respNode.setSpread(true);
-		respNode.setChildren(getTree(list,true));
+		respNode.setChildren(getTree(menus,true));
 		result.add(respNode);
 		return result;
 	}

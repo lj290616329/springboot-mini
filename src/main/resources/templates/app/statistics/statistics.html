@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css">
+    <!--申请的key值--><!--  F0i6SrLmHquLVNLCqpExxPrj8mWVdFwx -->
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=AQzdGwhPm0LrbrjckGMOGLPW74eQBqxN"></script>
+    <!--加载鼠标绘制工具-->
+    <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
+    <!--加载检索信息窗口-->
+    <script type="text/javascript" src="http://api.map.baidu.com/library/SearchInfoWindow/1.4/src/SearchInfoWindow_min.js"></script>
+
+    <script src="/static/layuiadmin/layui/layui.js"></script>
+
+
+</head>
+<style>
+    .portlet.light{padding:5px}
+    .form .form-body, .portlet-form .form-body{padding:0;}
+    .tools{
+        position: absolute;
+        width: 300px;
+        top:50px;
+        z-index: 3;
+        right:-300px;
+        background:#E8EBF0;
+        border-radius: 15px!important;
+        box-shadow: darkgrey 0px 2px 5px 1px;
+        animation:fadeOut 0.5s linear;
+    }
+
+    .tools-tb1{
+        padding: 10px 20px;
+        font-weight: bold;
+        position:relative;
+    }
+    .tools-tb1:after{
+        content: " ";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 1px;
+        border-top: 1px solid #D9D9D9;
+        color: #D9D9D9;
+    }
+    .tools-tb1 div{
+        background-color:darkgray;
+        border-radius: 15px!important;
+        padding: 3px 15px;
+        color:#ffffff;
+        display:inline-block;
+        box-shadow: darkgrey 0px 2px 2px 1px;
+    }
+    .check{background-color:#2878DE!important;}
+    .shequ:hover{
+        background-color:gray;
+    }
+    .tools-tb1{
+        font-size:0px;
+    }
+    .tools-tb1 .area{
+        margin-left:10px;
+        font-size:14px;
+        cursor:pointer;
+    }
+    .sel-shequ{
+        margin: 5px 0px;
+        line-height: 30px;
+        background-color:#2878DE;
+        padding-left:20px;
+        color:#ffffff;
+        font-weight: bold;
+    }
+    .shequ{
+        padding:0 20px;
+        width:100%;
+    }
+    .shequ label{width: inherit;}
+    .type{padding:0 20px;
+        width:100%;}
+    .type label:first-child{width:100%;}
+    .type label:last-child{float:right;}
+    @keyframes fadeIn{
+        0%{
+            right:-260px;
+        }
+        100%{
+            right:10px;
+        }
+    }
+    @keyframes fadeOut{
+        0%{
+            right:10px;
+        }
+        100%{
+            right:-260px;
+        }
+    }
+    .zhankai{
+        top: 50%;
+        left: -25px;
+        background: #458dd4;
+        position: absolute;
+        height: 80px;
+        width: 25px;
+        opacity: .7;
+        -webkit-transform:translate(0,-50%) rotate(180deg);
+        transform: translate(0,-50%) rotate(180deg);
+        line-height: 80px;
+
+        border-radius: 0px 10px 10px 0px !important;
+    }
+    .zhankai:hover{
+        opacity: 1;
+    }
+    .zhankai:before{
+        content: " ";
+        display: inline-block;
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+        margin-left: 2px;
+        margin-top: 22px;
+        height: 15px;
+        width: 15px;
+        border-width: 5px 5px 0 0;
+        border-color: #ffffff;
+        border-style: solid;
+    }
+    .show-tools .zhankai{
+        transform: translate(0,-50%) rotate(0deg);
+        -webkit-transform: translate(0,-50%) rotate(0deg);
+        border-radius: 10px 0px 0px 10px !important;
+    }
+    .show-tools{
+        right: 10px;
+        animation:fadeIn 0.5s linear;
+    }
+    body{
+        overflow: hidden;
+    }
+    .anchorBL{display:none;}
+    .search_box{
+        position:absolute;
+        z-index: 10;
+        left:15px;
+        top:0px;
+        padding: 15px;
+        background: #E8EBF0;
+        border-radius: 0px 0px 10px 10px!important;
+        box-shadow: darkgrey 0px 2px 5px 1px;
+        animation:topFadeOut 0.3s linear;
+    }
+    .shrink{
+        top: 76px;
+        left: 40%;
+        background: #458dd4;
+        position: absolute;
+        height: 25px;
+        width: 80px;
+        opacity: .7;
+        -webkit-transform: translate(0,-50%) rotate(180deg);
+        transform: translate(0,-50%) rotate(180deg);
+        border-radius: 10px 10px 0px 0px !important;
+    }
+    .shrink:hover{
+        opacity: 1;
+    }
+    .shrink:before {
+        content: " ";
+        display: inline-block;
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+        margin-left: 33px;
+        height: 15px;
+        width: 15px;
+        border-width: 0px 5px 5px 0;
+        border-color: #ffffff;
+        border-style: solid;
+    }
+    @keyframes topFadeIn{
+        0%{
+            top:-40px;
+        }
+        100%{
+            top:-80px;
+        }
+    }
+    @keyframes topFadeOut{
+        0%{
+            top:-80px;
+        }
+        100%{
+            top:-40px;
+        }
+    }
+    .show-shrink{
+        top: -60px;
+        animation:topFadeIn 0.3s linear;
+    }
+    .show-shrink .shrink{
+        border-radius: 0px 0px 10px 10px!important;
+        transform: translate(0,-50%) rotate(360deg);
+        -webkit-transform: translate(0,-50%) rotate(360deg);
+    }
+    .result{width:100%;height:auto;}
+    .ritem{height:40px;width:100%;border-width:0px 1px 1px 1px;border-style: solid;border-color:#aaa;line-height: 40px;font-size: 14px;padding: 0 10px;}
+    .portlet{margin-bottom:0;}
+    .suspend{right: 100px;}
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <div class="layui-row">
+            <div class="layui-col-md12">
+                <div id="map" style="-webkit-transition: all 0.5s ease-in-out;transition: all 0.5s ease-in-out;"></div>
+            </div>
+            <div class="tools show-tools">
+                <div class="zhankai"></div>
+                <div class="tools-tb1">
+                    <!-- <span style="font-size:14px;">显示管理</span> -->
+                    <div class="area" id="grid" data-type="grid">显示网络</div><div class="area" id="build" data-type="build">区域外目标</div>
+                </div>
+                <div>
+                    <div class="sel-shequ">
+                        选择社区
+                    </div>
+                    <form class="layui-form" action="">
+                        <div class="layui-form-item layui-row" pane="" style="padding: 0 20px;">
+                            <div class="layui-col-md12">
+                                <input type="checkbox" lay-filter="community" value="0" lay-skin="primary" title="和平社区" checked>
+                            </div>
+                            <div class="layui-col-md12">
+                                <input type="checkbox" lay-filter="community" value="1" lay-skin="primary" title="新和社区" checked>
+                            </div>
+                            <div class="layui-col-md12">
+                                <input type="checkbox" lay-filter="community" value="2" lay-skin="primary" title="桥头社区" checked>
+                            </div>
+                            <div class="layui-col-md12">
+                                <input type="checkbox" lay-filter="community" value="3" lay-skin="primary" title="塘尾社区" checked>
+                            </div>
+                            <div class="layui-col-md12">
+                                <input type="checkbox" lay-filter="community" value="4" lay-skin="primary" title="大洋社区" checked>
+                            </div>
+                            <div class="layui-col-md12">
+                                <input type="checkbox" lay-filter="community" value="5" lay-skin="primary" title="新田社区" checked>
+                            </div>
+                            <div class="layui-col-md12">
+                                <input type="checkbox" lay-filter="community" value="6" lay-skin="primary" title="稔田社区" checked>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="sel-shequ">
+                        选择人群
+                    </div>
+                    <form class="layui-form" action="">
+                        <div class="layui-form-item" pane="">
+                            <div class="layui-col-md12">
+                                <img style="width:15px;margin: 6px 6px 0;" src="/images/00.png"><input type="checkbox" name="like1[write]" lay-skin="primary" title="吸毒人员(1457)" checked>
+                                <input type="checkbox" name="like1[read]" lay-skin="primary" title="搬离(765)">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/static/js/mapindex.js"></script>
+<script>
+    layui.config({
+        base: '/layuiadmin/'//静态资源所在路径
+    }).extend({
+        CoreUtil : 'core-util/CoreUtil'
+    }).use(['form','layer','layedit','CoreUtil'], function(){
+
+        var marker_box_0 = new Array(7);
+        var marker_box_1 = new Array(7);
+        var label_box_0 = new Array(7);
+        var label_box_1 = new Array(7);
+
+        var $ = jQuery = layui.jquery;
+        var layer = layui.layer;
+        var CoreUtil = layui.CoreUtil;
+        var form = layui.form;
+        $("#map").height(window.innerHeight-30);
+
+        var point_center = new BMap.Point(113.798659,22.690389);
+        map.centerAndZoom(point_center, 16);
+
+        var loadData = function(){
+            CoreUtil.sendAjax("/manager/statistics",null,function (res) {
+                $.each(res.data,function(cid,community){
+                    var community_points = new Array();
+                    var community_boundary = community.boundary.split("#");
+                    $.each(community_boundary,function(index,boundary){
+                        var community_arr = boundary.split(",");
+                        community_points.push(new BMap.Point(community_arr[0],community_arr[1]));
+                    });
+                    var community_polygon = new BMap.Polygon(community_points, community_polygon_style);  //创建多边形
+                    map.addOverlay(community_polygon);
+                    var community_center = community.center;
+                    var community_p = community_center.split(",") ;
+                    var community_point_center = new BMap.Point(community_p[0],community_p[1]);
+                    var community_label = new BMap.Label(community.name, {offset:new BMap.Size(-20,-5), position:community_point_center});
+                    community_label.setStyle(community_label_style);//对label 样式隐藏
+                    map.addOverlay(community_label);
+
+                    $.each(community.grids,function(index,grid){
+                        //渲染边界
+                        var grid_points = new Array();
+                        var grid_boundary = grid.boundary.split("#");
+                        $.each(grid_boundary,function(index,boundary){
+                            var grid_arr = boundary.split(",");
+                            grid_points.push(new BMap.Point(grid_arr[0],grid_arr[1]));
+                        });
+                        var grid_polygon = new BMap.Polygon(grid_points, grid_polygon_style);  //创建多边形
+                        map.addOverlay(grid_polygon);
+                        grid_polygon.hide();
+                        //渲染名称
+                        var grid_center = grid.center;
+                        var grid_p = grid_center.split(",") ;
+                        var grid_point_center = new BMap.Point(grid_p[0],grid_p[1]);
+                        var grid_label = new BMap.Label(grid.name, {offset:new BMap.Size(-20,-5), position:grid_point_center});
+                        grid_label.setStyle(grid_label_style);//对label 样式隐藏
+                        map.addOverlay(grid_label);
+                        grid_label.hide();
+                    });
+                    var worker  = new Worker('/js/workers.js');
+                    worker.postMessage(community.drugers)   //发送信息给子线程
+                    worker.onmessage = function(event){
+                        var temp_marker_box_0 = new Array();
+                        var temp_marker_box_1 = new Array();
+                        var temp_label_box_0 = new Array();
+                        var temp_label_box_1 = new Array();
+                        $.each(event.data,function(mindex,member){
+                            var point = new BMap.Point(member.longitude,member.latitude);
+                            var icon = new BMap.Icon("/images/"+member.status+"0.png?v=1.5", new BMap.Size(14,14));
+                            var marker = new BMap.Marker(point,{icon:icon});
+                            map.addOverlay(marker);
+                            marker.addEventListener("click", function(){
+                                member_detail(member.id);
+                            })
+                            var lab,text;
+                            text = member.name;
+                            var member_label = new BMap.Label(text, {offset:new BMap.Size(-16,10), position:point});
+                            member_label.setStyle(druger_label_style);//对label 样式隐藏
+                            map.addOverlay(member_label);
+                            member_label.hide();
+                            if(member.status==0){
+                                temp_marker_box_0.push(marker);
+                                temp_label_box_0.push(member_label)
+                            }else{
+                                temp_marker_box_1.push(marker);
+                                temp_label_box_1.push(member_label)
+                            }
+
+                        })
+                        marker_box_0[cid] = temp_marker_box_0;
+                        marker_box_1[cid] = temp_label_box_0;
+                        label_box_0[cid] = temp_label_box_0;
+                        label_box_1[cid] = temp_label_box_1;
+                    };
+                });
+            },"GET",false,false);
+        };
+        loadData();
+        var member_detail = function (id) {
+            var ifr = layer.open({
+                title: "吸毒人员详细",
+                type: 2,
+                content: '/home/app/common/detail',
+                area: ['300px', '300px'],
+                maxmin: true,
+                success: function (layero, index) {
+                    // 获取子页面的iframe
+                    var iframe = window['layui-layer-iframe' + index];
+                    // 向子页面的全局函数child传参
+                    iframe.detail(id,'druger');
+                }
+            });
+            layer.full(ifr);
+        }
+        form.on('checkbox(community)', function (data) {
+            console.log(data);
+            if(data.elem.checked){
+                marker_operation(data.value,true);
+            }else{
+                marker_operation(data.value,false);
+            }
+        });
+        //按照社区显示
+        var marker_operation = function(cid,flag){
+            var markes = marker_box_0[cid];
+            if(flag){
+                for(var i=0,leg=markes.length;i<leg;i++){
+                    markes[i].show();
+                }
+            }else{
+                for(var i=0,leg=markes.length;i<leg;i++){
+                    markes[i].hide();
+                }
+            }
+        };
+    })
+</script>
+</html>

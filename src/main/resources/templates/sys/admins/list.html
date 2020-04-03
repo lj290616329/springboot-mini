@@ -309,7 +309,6 @@
                                 $(getData).each(function (index,item) {
                                     roleIds.push(item.value);
                                 });
-                                console.log(JSON.stringify(roleIds));
                                 CoreUtil.sendAjax("/manager/admin/roles/"+data.id,JSON.stringify(roleIds),function (res) {
                                     layer.msg(res.msg);
                                     getTableData();

@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 日期参数格式化
+ */
 @Component
 public class DateConverterConfig implements Converter<String, Date> {
 

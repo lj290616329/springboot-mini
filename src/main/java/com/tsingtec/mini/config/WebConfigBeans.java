@@ -17,17 +17,14 @@ public class WebConfigBeans {
     /**
      * 增加字符串转日期的功能
      */
-
     @PostConstruct
     public void initEditableAvlidation() {
-
         ConfigurableWebBindingInitializer initializer = (ConfigurableWebBindingInitializer)handlerAdapter.getWebBindingInitializer();
         if(initializer.getConversionService()!=null) {
             GenericConversionService genericConversionService = (GenericConversionService)initializer.getConversionService();
             genericConversionService.addConverter(new DateConverterConfig());
 
         }
-
     }
 
 }

@@ -1,4 +1,4 @@
-package com.tsingtec.mini.entity.app;
+package com.tsingtec.mini.entity.mini;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.util.Date;
 @DynamicInsert(true)
 @DynamicUpdate(true)
 @Table(name = "wx_ma_user")
-public class WxMaUser implements Serializable {
+public class MaUser implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

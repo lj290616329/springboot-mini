@@ -10,6 +10,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
+/**
+ * 图片验证码
+ */
 @Slf4j
 public class RandomValidateCodeUtil {
 

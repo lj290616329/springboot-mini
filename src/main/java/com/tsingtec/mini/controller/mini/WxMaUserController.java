@@ -1,12 +1,12 @@
-package com.tsingtec.mini.controller.app.mini;
+package com.tsingtec.mini.controller.mini;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
-import com.tsingtec.mini.config.wx.WxMaConfiguration;
-import com.tsingtec.mini.entity.app.WxMaUser;
-import com.tsingtec.mini.service.WxMaUserService;
+import com.tsingtec.mini.config.mini.WxMaConfiguration;
+import com.tsingtec.mini.entity.mini.MaUser;
+import com.tsingtec.mini.service.MaUserService;
 import com.tsingtec.mini.utils.DataResult;
 import com.tsingtec.mini.vo.req.app.mini.WxLoginReqVO;
 import com.tsingtec.mini.vo.resp.app.mini.InformationRespVO;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 public class WxMaUserController {
 
     @Autowired
-    private WxMaUserService wxMaUserService;
+    private MaUserService maUserService;
 
     /**
      * 授权 获取身份信息
@@ -62,12 +62,12 @@ public class WxMaUserController {
             // 解密用户信息
             WxMaUserInfo userInfo = wxService.getUserService().getUserInfo(session.getSessionKey(), wxLoginVo.getEncryptedData(), wxLoginVo.getIv());
             log.info(userInfo.toString());
-            WxMaUser wxMaUser = wxMaUserService.findByOpenId(userInfo.getOpenId());
-            if(null == wxMaUser){
-                wxMaUser = new WxMaUser();
+            MaUser maUser = maUserService.findByOpenId(userInfo.getOpenId());
+            if(null == maUser){
+                maUser = new MaUser();
             }
-            BeanUtils.copyProperties(userInfo,wxMaUser);
-            wxMaUserService.insert(wxMaUser);
+            BeanUtils.copyProperties(userInfo, maUser);
+            maUserService.insert(maUser);
 
         }catch (WxErrorException e) {
             result.setCode(-1);
@@ -99,10 +99,10 @@ public class WxMaUserController {
             log.info(session.getOpenid());
             log.info(session.getUnionid());
             //TODO 可以增加自己的逻辑，关联业务相关数据
-            WxMaUser wxMaUser = wxMaUserService.findByOpenId(session.getOpenid());
-            if(null != wxMaUser){
-                wxMaUser.setUnionId(session.getUnionid());
-                wxMaUserService.update(wxMaUser);
+            MaUser maUser = maUserService.findByOpenId(session.getOpenid());
+            if(null != maUser){
+                maUser.setUnionId(session.getUnionid());
+                maUserService.update(maUser);
                 result.setCode(0);
                 result.setMsg("登录成功");
             }else{

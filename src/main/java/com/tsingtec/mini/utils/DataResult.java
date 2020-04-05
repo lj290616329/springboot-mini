@@ -10,7 +10,7 @@ import lombok.Data;
  * @param <T>
  */
 @Data
-@Api("")
+@Api("全局返回数据")
 public class DataResult<T>{
 
     /**

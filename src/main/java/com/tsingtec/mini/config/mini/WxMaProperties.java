@@ -1,4 +1,4 @@
-package com.tsingtec.mini.config.wx;
+package com.tsingtec.mini.config.mini;
 
 import java.util.List;
 

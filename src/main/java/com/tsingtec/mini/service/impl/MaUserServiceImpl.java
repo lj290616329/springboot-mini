@@ -1,8 +1,8 @@
 package com.tsingtec.mini.service.impl;
 
-import com.tsingtec.mini.entity.app.WxMaUser;
-import com.tsingtec.mini.repository.WxMaUserRepository;
-import com.tsingtec.mini.service.WxMaUserService;
+import com.tsingtec.mini.entity.mini.MaUser;
+import com.tsingtec.mini.repository.MaUserRepository;
+import com.tsingtec.mini.service.MaUserService;
 import com.tsingtec.mini.vo.req.app.mini.WxUserPageReqVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,25 +18,25 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class WxMaUserServiceImpl implements WxMaUserService {
+public class MaUserServiceImpl implements MaUserService {
 
     @Autowired
-    private WxMaUserRepository wxMaUserRepository;
+    private MaUserRepository maUserRepository;
 
     @Override
-    public WxMaUser findByOpenId(String openId) {
-        return wxMaUserRepository.findByOpenId(openId);
+    public MaUser findByOpenId(String openId) {
+        return maUserRepository.findByOpenId(openId);
     }
 
     @Override
-    public WxMaUser get(Integer id) {
-        return wxMaUserRepository.getOne(id);
+    public MaUser get(Integer id) {
+        return maUserRepository.getOne(id);
     }
 
     @Override
-    public Page<WxMaUser> pageInfo(WxUserPageReqVO vo) {
+    public Page<MaUser> pageInfo(WxUserPageReqVO vo) {
         Pageable pageable = PageRequest.of(vo.getPageNum()-1, vo.getPageSize(), Sort.Direction.DESC,"id");
-        return wxMaUserRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+        return maUserRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<Predicate>();
 
             if (!org.apache.commons.lang3.StringUtils.isEmpty(vo.getName())){
@@ -66,16 +66,16 @@ public class WxMaUserServiceImpl implements WxMaUserService {
     }
 
     @Override
-    public WxMaUser insert(WxMaUser wxMaUser) {
-        wxMaUser.setCreateTime(new Date());
-        wxMaUser.setUpdateTime(new Date());
-        return wxMaUserRepository.save(wxMaUser);
+    public MaUser insert(MaUser maUser) {
+        maUser.setCreateTime(new Date());
+        maUser.setUpdateTime(new Date());
+        return maUserRepository.save(maUser);
     }
 
     @Override
-    public void update(WxMaUser wxMaUser) {
-        wxMaUser.setUpdateTime(new Date());
-        wxMaUserRepository.save(wxMaUser);
+    public void update(MaUser maUser) {
+        maUser.setUpdateTime(new Date());
+        maUserRepository.save(maUser);
     }
 
 }

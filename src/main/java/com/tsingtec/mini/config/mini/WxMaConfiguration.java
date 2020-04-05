@@ -1,4 +1,4 @@
-package com.tsingtec.mini.config.wx;
+package com.tsingtec.mini.config.mini;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;

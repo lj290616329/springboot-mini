@@ -1,4 +1,4 @@
-package com.tsingtec.mini.utils;
+package com.tsingtec.mini.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -28,7 +28,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/upload")
-public class UploadUtils {
+public class UploadController {
 
     @Autowired
     private ConstantQiniu constantQiniu;

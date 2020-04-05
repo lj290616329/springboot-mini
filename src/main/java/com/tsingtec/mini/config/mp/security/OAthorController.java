@@ -83,7 +83,7 @@ public class OAthorController {
 
 			BeanUtils.copyProperties(wxMpUser,mpUser);
 
-			mpUserService.save(mpUser);
+			mpUser = mpUserService.save(mpUser);
 
 			session.setAttribute("mp_user", mpUser);
 

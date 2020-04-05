@@ -1,11 +1,12 @@
 package com.tsingtec.mini.service.impl;
 
 import com.tsingtec.mini.entity.mp.MpUser;
+import com.tsingtec.mini.exception.BusinessException;
+import com.tsingtec.mini.exception.code.BaseExceptionType;
 import com.tsingtec.mini.repository.MpUserRepository;
 import com.tsingtec.mini.service.MpUserService;
 import com.tsingtec.mini.utils.BeanUtil;
 import com.tsingtec.mini.vo.req.app.mini.WxUserPageReqVO;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,9 @@ public class MpUserServiceImpl implements MpUserService {
 
     @Override
     public MpUser findByOpenId(String openId) {
+        if(StringUtils.isEmpty(openId)){
+            throw new BusinessException(BaseExceptionType.USER_ERROR,"非法openid");
+        }
         return mpUserRepository.findByOpenId(openId);
     }
 
@@ -74,7 +78,7 @@ public class MpUserServiceImpl implements MpUserService {
 
     @Override
     public MpUser save(MpUser mpUser) {
-        MpUser saveUser = mpUserRepository.findByOpenId(mpUser.getOpenId());
+        MpUser saveUser = findByOpenId(mpUser.getOpenId());
         saveUser = (saveUser != null) ? saveUser : new MpUser();
         BeanUtil.copyPropertiesIgnoreNull(mpUser,saveUser);
         if(saveUser.getCreateTime() == null){

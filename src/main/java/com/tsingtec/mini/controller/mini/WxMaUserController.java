@@ -46,46 +46,30 @@ public class WxMaUserController {
     @PostMapping("/auth")
     @ApiOperation(value = "用户授权接口")
     public DataResult<String> sign(@RequestBody WxLoginReqVO wxLoginVo){
-
         final WxMaService wxService = WxMaConfiguration.getMaService();
-
         DataResult result = DataResult.success();
-
         log.info("登录信息为:{}",wxLoginVo);
-
         String code = wxLoginVo.getCode();
-
         if(StringUtils.isBlank(code)){
             result.setCode(-1);
             result.setMsg("授权信息不全,请重新进行授权");
             return result;
         }
-
         try {
-
             WxMaJscode2SessionResult session = wxService.getUserService().getSessionInfo(code);
-
             if (!wxService.getUserService().checkUserInfo(session.getSessionKey(), wxLoginVo.getRawData(), wxLoginVo.getSignature())) {
                 result.setCode(-1);
                 result.setMsg("user check failed");
                 return result;
             }
-
             // 解密用户信息
             WxMaUserInfo userInfo = wxService.getUserService().getUserInfo(session.getSessionKey(), wxLoginVo.getEncryptedData(), wxLoginVo.getIv());
-
             log.info(userInfo.toString());
-
             MaUser maUser = new MaUser();
-
             BeanUtils.copyProperties(userInfo, maUser);
-
             maUser = maUserService.save(maUser);
-
             String token = jwtUtil.getToken(maUser);
-
             result.setData(token);
-
         }catch (WxErrorException e) {
             result.setCode(-1);
             result.setMsg("授权失败,请稍后再试!");
@@ -94,18 +78,13 @@ public class WxMaUserController {
         return result;
     }
 
-
     @LoginToken
     @GetMapping("user/{id}")
     @ApiOperation(value="用户信息")
     public DataResult<MaUser> info(@PathVariable("id") Integer id){
-
         DataResult result = DataResult.success();
-
         MaUser maUser = maUserService.get(id);
-
         result.setData(maUser);
-
         return result;
     }
 
@@ -131,7 +110,6 @@ public class WxMaUserController {
         return result;
     }
 
-
     /**
      * 登录接口
      */
@@ -141,7 +119,6 @@ public class WxMaUserController {
         InformationRespVO informationRespVO = new InformationRespVO();
         DataResult result = DataResult.success();
         result.setData(informationRespVO);
-
         if (StringUtils.isBlank(code)) {
             result.setCode(-1);
             result.setMsg("授权信息不全,请重新进行授权");
@@ -153,7 +130,6 @@ public class WxMaUserController {
             log.info(session.getSessionKey());
             log.info(session.getOpenid());
             log.info(session.getUnionid());
-            //TODO 可以增加自己的逻辑，关联业务相关数据
             MaUser maUser = maUserService.findByOpenId(session.getOpenid());
             if(null != maUser){
                 maUser.setUnionId(session.getUnionid());
@@ -181,19 +157,21 @@ public class WxMaUserController {
      * </pre>
      */
     @GetMapping("/info")
-    public DataResult info(String sessionKey,
+    public DataResult<MaUser> info(String sessionKey,
                        String signature, String rawData, String encryptedData, String iv) {
         DataResult result = DataResult.success();
         final WxMaService wxService = WxMaConfiguration.getMaService();
-
-        // 用户信息校验
+        //用户信息校验
         if (!wxService.getUserService().checkUserInfo(sessionKey, rawData, signature)) {
             result.setCode(-1);
             result.setMsg("登录失败");
         }
         // 解密用户信息
         WxMaUserInfo userInfo = wxService.getUserService().getUserInfo(sessionKey, encryptedData, iv);
-
+        MaUser maUser = new MaUser();
+        BeanUtils.copyProperties(userInfo,maUser);
+        maUser = maUserService.save(maUser);
+        result.setData(maUser);
         return result;
     }
 

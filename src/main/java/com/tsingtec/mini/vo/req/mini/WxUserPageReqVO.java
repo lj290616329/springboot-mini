@@ -1,4 +1,4 @@
-package com.tsingtec.mini.vo.req.app.mini;
+package com.tsingtec.mini.vo.req.mini;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -27,8 +27,8 @@ public class WxUserPageReqVO {
     private String name;
 
     @ApiModelProperty(value = "开始时间")
-    private String startTime;
+    private Date startTime;
 
     @ApiModelProperty(value = "结束时间")
-    private String endTime;
+    private Date endTime;
 }

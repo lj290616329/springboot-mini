@@ -75,8 +75,8 @@ public class KickoutSessionFilter extends AccessControlFilter {
 		if (!subject.isAuthenticated()) {
 			// 如果没有登录，直接进行之后的流程
 			//判断是不是Ajax请求，异步请求，直接响应返回未登录
-			DataResult responseResult = new DataResult();
 			if (isAjax) {
+				httpServletResponse.setCharacterEncoding("UTF-8");
 				log.debug(getClass().getName()+ "当前用户已经在其他地方登录，并且是Ajax请求！");
 				httpServletResponse.getWriter().write("{\"code\":-1,\"msg\":\"您已在别处登录，请您修改密码或重新登录！\"}");
 				return false;
@@ -175,15 +175,13 @@ public class KickoutSessionFilter extends AccessControlFilter {
 		 * 2.如果是普通请求，直接跳转到登录页
 		 */
 		//判断是不是Ajax请求
-		DataResult responseResult = new DataResult();
-
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		String header = httpServletRequest.getHeader("X-Requested-With");
 		boolean isAjax = "XMLHttpRequest".equals(header) ;
 
-
 		if (isAjax) {
+			httpServletResponse.setCharacterEncoding("UTF-8");
 			log.debug(getClass().getName()+ "当前用户已经在其他地方登录，并且是Ajax请求！");
 			httpServletResponse.getWriter().write("{\"code\":-1,\"msg\":\"您已在别处登录，请您修改密码或重新登录！\"}");
 		}else{

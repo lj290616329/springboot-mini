@@ -1,4 +1,4 @@
-package com.tsingtec.mini.vo.req.app.mini;
+package com.tsingtec.mini.vo.req.mini;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

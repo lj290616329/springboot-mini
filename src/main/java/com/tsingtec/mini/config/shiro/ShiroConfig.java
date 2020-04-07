@@ -96,6 +96,8 @@ public class ShiroConfig {
 		return shiroRealm;
 	}
 
+
+
 	/**
 	 * ehcache缓存管理器；shiro整合ehcache：
 	 * 通过安全管理器：securityManager

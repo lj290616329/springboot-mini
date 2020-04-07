@@ -46,7 +46,7 @@ public class StartupListener implements ApplicationRunner{
         if(OS.toLowerCase().indexOf("windows")>=0) {
             stringBuilder.append(" "+mysqlPath+"/bin/mysqldump");
         }else {
-            stringBuilder.append("/usr/local/mysql/bin/mysqldump");
+            stringBuilder.append(""+mysqlPath+"/bin/mysqldump");
         }
         stringBuilder.append(" --opt").append(" -h").append(hostIP).append(" -P").append(port);
         stringBuilder.append(" --user=").append(userName).append(" --password=").append(password).append(" --lock-all-tables=true");

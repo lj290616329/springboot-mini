@@ -4,11 +4,13 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import com.tsingtec.mini.aop.annotation.LoginToken;
+import com.tsingtec.mini.config.jwt.JwtUtil;
 import com.tsingtec.mini.config.mini.WxMaConfiguration;
 import com.tsingtec.mini.entity.mini.MaUser;
 import com.tsingtec.mini.service.MaUserService;
 import com.tsingtec.mini.utils.DataResult;
-import com.tsingtec.mini.vo.req.app.mini.WxLoginReqVO;
+import com.tsingtec.mini.vo.req.mini.WxLoginReqVO;
 import com.tsingtec.mini.vo.resp.app.mini.InformationRespVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +35,9 @@ public class WxMaUserController {
     @Autowired
     private MaUserService maUserService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     /**
      * 授权 获取身份信息
      * @param wxLoginVo
@@ -40,34 +45,46 @@ public class WxMaUserController {
      */
     @PostMapping("/auth")
     @ApiOperation(value = "用户授权接口")
-    public DataResult<InformationRespVO> sign(@RequestBody WxLoginReqVO wxLoginVo){
+    public DataResult<String> sign(@RequestBody WxLoginReqVO wxLoginVo){
+
         final WxMaService wxService = WxMaConfiguration.getMaService();
+
         DataResult result = DataResult.success();
-        InformationRespVO informationRespVO = new InformationRespVO();
-        result.setData(informationRespVO);
+
         log.info("登录信息为:{}",wxLoginVo);
+
         String code = wxLoginVo.getCode();
+
         if(StringUtils.isBlank(code)){
             result.setCode(-1);
             result.setMsg("授权信息不全,请重新进行授权");
             return result;
         }
+
         try {
+
             WxMaJscode2SessionResult session = wxService.getUserService().getSessionInfo(code);
+
             if (!wxService.getUserService().checkUserInfo(session.getSessionKey(), wxLoginVo.getRawData(), wxLoginVo.getSignature())) {
                 result.setCode(-1);
                 result.setMsg("user check failed");
                 return result;
             }
+
             // 解密用户信息
             WxMaUserInfo userInfo = wxService.getUserService().getUserInfo(session.getSessionKey(), wxLoginVo.getEncryptedData(), wxLoginVo.getIv());
+
             log.info(userInfo.toString());
-            MaUser maUser = maUserService.findByOpenId(userInfo.getOpenId());
-            if(null == maUser){
-                maUser = new MaUser();
-            }
+
+            MaUser maUser = new MaUser();
+
             BeanUtils.copyProperties(userInfo, maUser);
-            maUserService.insert(maUser);
+
+            maUser = maUserService.save(maUser);
+
+            String token = jwtUtil.getToken(maUser);
+
+            result.setData(token);
 
         }catch (WxErrorException e) {
             result.setCode(-1);
@@ -76,6 +93,44 @@ public class WxMaUserController {
         }
         return result;
     }
+
+
+    @LoginToken
+    @GetMapping("user/{id}")
+    @ApiOperation(value="用户信息")
+    public DataResult<MaUser> info(@PathVariable("id") Integer id){
+
+        DataResult result = DataResult.success();
+
+        MaUser maUser = maUserService.get(id);
+
+        result.setData(maUser);
+
+        return result;
+    }
+
+    @GetMapping("update")
+    @ApiOperation(value="用户信息")
+    public DataResult<String> update(){
+        DataResult result = DataResult.success();
+        MaUser maUser = maUserService.get(1);
+        maUserService.save(maUser);
+        System.out.println(maUserService.get(1));
+        return result;
+    }
+
+    @GetMapping("token/{id}")
+    @ApiOperation(value="用户信息")
+    public DataResult<String> token(@PathVariable("id") Integer id){
+        DataResult result = DataResult.success();
+        MaUser maUser = maUserService.get(1);
+        maUser.setId(id);
+        System.out.println(maUser);
+        String token = jwtUtil.getToken(maUser);
+        result.setData(token);
+        return result;
+    }
+
 
     /**
      * 登录接口
@@ -102,7 +157,7 @@ public class WxMaUserController {
             MaUser maUser = maUserService.findByOpenId(session.getOpenid());
             if(null != maUser){
                 maUser.setUnionId(session.getUnionid());
-                maUserService.update(maUser);
+                maUserService.save(maUser);
                 result.setCode(0);
                 result.setMsg("登录成功");
             }else{

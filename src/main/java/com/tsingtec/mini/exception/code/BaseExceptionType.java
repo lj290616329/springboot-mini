@@ -17,7 +17,8 @@ public enum BaseExceptionType {
     USER_ERROR(400,"用户输入异常"),
     PERMISSION_ERROR(403,"您没有权限进行此操作"),
     SYSTEM_ERROR (500,"系统服务异常"),
-    OTHER_ERROR(999,"未知异常,请联系管理员");
+    OTHER_ERROR(999,"未知异常,请联系管理员"),
+    TOKEN_ERROR(401,"token错误");
 
     BaseExceptionType(int code, String msg) {
         this.code = code;

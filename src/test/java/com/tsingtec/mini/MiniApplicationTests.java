@@ -1,19 +1,14 @@
 package com.tsingtec.mini;
 
-import com.tsingtec.mini.entity.sys.Menu;
-import com.tsingtec.mini.entity.sys.Role;
-import com.tsingtec.mini.entity.sys.SysLog;
-import com.tsingtec.mini.service.MenuService;
-import com.tsingtec.mini.service.RoleService;
-import com.tsingtec.mini.service.SysLogService;
-import com.tsingtec.mini.vo.req.sys.log.SysLogPageReqVO;
-import com.tsingtec.mini.vo.resp.sys.menu.MenuRespNode;
+import com.tsingtec.mini.config.ConstantQiniu;
+import com.tsingtec.mini.service.*;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
+import org.springframework.cache.CacheManager;
 
-import java.util.List;
+import javax.annotation.Resource;
 
 @SpringBootTest
 class MiniApplicationTests {
@@ -26,6 +21,9 @@ class MiniApplicationTests {
     private MenuService menuService;
     @Test
     void contextLoads() {
+
+
+        System.out.println(StringUtils.join(cacheManager.getCacheNames(), ","));
         /*SysLogPageReqVO sysLogPageReqVO = new SysLogPageReqVO();
         sysLogPageReqVO.setOperation("街道管理");
         Page<SysLog> logs = logService.pageInfo(sysLogPageReqVO);

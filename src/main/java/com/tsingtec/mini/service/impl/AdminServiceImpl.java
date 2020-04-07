@@ -83,7 +83,7 @@ public class AdminServiceImpl implements AdminService {
             }
 
             if (!StringUtils.isBlank(vo.getLoginName())){
-                predicates.add(criteriaBuilder.equal(root.get("loginName"),"%"+vo.getLoginName()+"%"));
+                predicates.add(criteriaBuilder.like(root.get("loginName"),"%"+vo.getLoginName()+"%"));
             }
 
             if (null != vo.getStartTime()){

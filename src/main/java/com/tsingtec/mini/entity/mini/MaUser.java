@@ -21,7 +21,7 @@ public class MaUser implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
-	private String id;
+	private Integer id;
 
 	@JsonIgnore
 	private String openId; //公众号openid

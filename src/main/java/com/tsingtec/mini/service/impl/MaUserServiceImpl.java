@@ -3,8 +3,12 @@ package com.tsingtec.mini.service.impl;
 import com.tsingtec.mini.entity.mini.MaUser;
 import com.tsingtec.mini.repository.MaUserRepository;
 import com.tsingtec.mini.service.MaUserService;
-import com.tsingtec.mini.vo.req.app.mini.WxUserPageReqVO;
+import com.tsingtec.mini.utils.BeanUtil;
+import com.tsingtec.mini.vo.req.mini.WxUserPageReqVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@CacheConfig(cacheNames = {"shiro"})
 public class MaUserServiceImpl implements MaUserService {
 
     @Autowired
@@ -29,8 +34,9 @@ public class MaUserServiceImpl implements MaUserService {
     }
 
     @Override
+    @Cacheable(key="'maUser'+#id")
     public MaUser get(Integer id) {
-        return maUserRepository.getOne(id);
+        return maUserRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -39,11 +45,11 @@ public class MaUserServiceImpl implements MaUserService {
         return maUserRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<Predicate>();
 
-            if (!org.apache.commons.lang3.StringUtils.isEmpty(vo.getName())){
+            if (!StringUtils.isEmpty(vo.getName())){
                 predicates.add(criteriaBuilder.like(root.get("name"),"%"+vo.getName()+"%"));
             }
 
-            if (!org.apache.commons.lang3.StringUtils.isBlank(vo.getNickName())){
+            if (!StringUtils.isEmpty(vo.getNickName())){
                 predicates.add(criteriaBuilder.like(root.get("nickName"),"%"+vo.getNickName()+"%"));
             }
 
@@ -66,16 +72,24 @@ public class MaUserServiceImpl implements MaUserService {
     }
 
     @Override
-    public MaUser insert(MaUser maUser) {
-        maUser.setCreateTime(new Date());
-        maUser.setUpdateTime(new Date());
-        return maUserRepository.save(maUser);
-    }
+    @CachePut(key="'maUser'+#maUser.id")
+    public MaUser save(MaUser maUser) {
 
-    @Override
-    public void update(MaUser maUser) {
-        maUser.setUpdateTime(new Date());
-        maUserRepository.save(maUser);
+        MaUser saveUser = new MaUser();
+
+        saveUser = (saveUser != null) ? saveUser : new MaUser();
+
+        BeanUtil.copyPropertiesIgnoreNull(maUser,saveUser);
+
+        if(saveUser.getCreateTime() == null){
+
+            saveUser.setCreateTime(new Date());
+
+        }
+
+        saveUser.setUpdateTime(new Date());
+
+        return maUserRepository.save(saveUser);
     }
 
 }

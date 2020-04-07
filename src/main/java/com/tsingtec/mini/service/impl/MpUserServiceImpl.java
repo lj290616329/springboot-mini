@@ -6,7 +6,7 @@ import com.tsingtec.mini.exception.code.BaseExceptionType;
 import com.tsingtec.mini.repository.MpUserRepository;
 import com.tsingtec.mini.service.MpUserService;
 import com.tsingtec.mini.utils.BeanUtil;
-import com.tsingtec.mini.vo.req.app.mini.WxUserPageReqVO;
+import com.tsingtec.mini.vo.req.mini.WxUserPageReqVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

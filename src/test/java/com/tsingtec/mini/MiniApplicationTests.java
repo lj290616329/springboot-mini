@@ -1,8 +1,9 @@
 package com.tsingtec.mini;
 
-import com.tsingtec.mini.config.ConstantQiniu;
+import com.tsingtec.mini.config.qiniu.ConstantQiniu;
+import com.tsingtec.mini.config.jwt.JwtUtil;
+import com.tsingtec.mini.entity.mini.MaUser;
 import com.tsingtec.mini.service.*;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

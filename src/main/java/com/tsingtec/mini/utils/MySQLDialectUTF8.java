@@ -1,4 +1,4 @@
-package com.tsingtec.mini.config;
+package com.tsingtec.mini.utils;
 
 import org.hibernate.dialect.MySQL5Dialect;
 

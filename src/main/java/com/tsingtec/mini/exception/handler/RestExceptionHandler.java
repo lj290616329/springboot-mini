@@ -1,4 +1,4 @@
-package com.tsingtec.mini.config;
+package com.tsingtec.mini.exception.handler;
 
 import com.tsingtec.mini.exception.BusinessException;
 import com.tsingtec.mini.exception.code.BaseExceptionType;

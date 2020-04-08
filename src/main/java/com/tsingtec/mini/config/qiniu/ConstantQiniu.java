@@ -1,4 +1,4 @@
-package com.tsingtec.mini.config;
+package com.tsingtec.mini.config.qiniu;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

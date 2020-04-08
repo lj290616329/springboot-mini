@@ -1,4 +1,4 @@
-package com.tsingtec.mini.config;
+package com.tsingtec.mini.config.dateConverter;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

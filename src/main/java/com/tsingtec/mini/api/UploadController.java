@@ -10,15 +10,19 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import com.tsingtec.mini.config.qiniu.ConstantQiniu;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Base64;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -26,12 +30,105 @@ import java.util.UUID;
  * @Date 2020/3/9 16:42
  * @Version 1.0
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/upload")
 public class UploadController {
 
     @Autowired
     private ConstantQiniu constantQiniu;
+
+    @Value("${file-path}")
+    private String docBase;
+
+    @PostMapping(value = "/file")
+    public JSONObject uploadCover(@RequestParam("file") MultipartFile multipartFile) {
+        System.out.println(new Date().getTime());
+        /**
+         * 文件保存路径按照日期进行保存
+         */
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        //当前文件加
+        String savePath = sdf.format(new Date());
+
+        File saveFile = new File(docBase+"/"+savePath);
+        if (!saveFile.exists()) {// 如果目录不存在
+            saveFile.mkdirs();// 创建文件夹
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code",0);
+        jsonObject.put("msg","上传成功");
+
+        String fileName = "";
+        String fileRandomName = "";
+        try {
+
+            JSONObject result = new JSONObject();
+
+            fileName = multipartFile.getOriginalFilename();
+            String fileType = fileName.substring(fileName.lastIndexOf("."));
+            fileRandomName = UUID.randomUUID().toString() + fileType;
+            //使用绝对路径进行文件保存
+            FileUtils.copyInputStreamToFile(multipartFile.getInputStream(), new File(docBase+"/"+savePath +"/"+ fileRandomName));
+
+            result.put("src","/" + savePath + "/" + fileRandomName);
+            result.put("title",fileName);
+            jsonObject.put("data",result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Message:文件:{}，保存失败", fileName);
+            jsonObject.put("code",-1);
+            jsonObject.put("msg","文件上传失败");
+        }
+        return jsonObject;
+    }
+
+    /**
+     * base64 格式为:
+     * @param json
+     * @return
+     */
+    @PostMapping("/base64")
+    public JSONObject base64(@RequestBody String json){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code",0);
+        jsonObject.put("msg","上传成功");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+
+        String savePath = sdf.format(new Date());
+
+        File saveFile = new File(docBase+"/"+savePath);
+
+        if (!saveFile.exists()) {// 如果目录不存在
+            saveFile.mkdirs();// 创建文件夹
+        }
+
+        String[] strs = json.split(",");
+
+        String fileRandomName = UUID.randomUUID().toString()+strs[2];
+
+        File file = new File(docBase+"/"+saveFile, fileRandomName);
+        byte[] fileBytes = Base64.getDecoder().decode(strs[1]);
+        try {
+
+            JSONObject result = new JSONObject();
+
+            FileUtils.writeByteArrayToFile(file, fileBytes);
+
+            result.put("src","/" + savePath +"/"+ fileRandomName);
+            result.put("title",fileRandomName);
+            jsonObject.put("data",result);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("Message:文件:{}，保存失败", fileRandomName);
+            jsonObject.put("code",-1);
+            jsonObject.put("msg","文件上传失败");
+        }
+        return jsonObject;
+    }
+
 
     /**
      * 上传文件到七牛云存储

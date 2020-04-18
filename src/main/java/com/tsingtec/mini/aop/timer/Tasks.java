@@ -1,5 +1,8 @@
 package com.tsingtec.mini.aop.timer;
 
+import com.tsingtec.mini.config.webSocket.WebSocketServer;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @EnableScheduling
+@EnableAsync
 public class Tasks {
 
 
@@ -23,6 +27,12 @@ public class Tasks {
     @Scheduled(cron = "1 1 1 1,2,3 3,6,9,12 ? ")
     public void statistics(){
 
+    }
+
+    @Async
+    @Scheduled(fixedRate=55*1000)
+    public void configureTasks() throws Exception{
+        WebSocketServer.send("呼叫动拐,呼叫动拐!");
     }
 
 

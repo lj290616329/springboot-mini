@@ -1,5 +1,6 @@
 package com.tsingtec.mini.entity.mp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.DynamicInsert;
@@ -30,6 +31,7 @@ public class MpUser implements Serializable {
 
     private Boolean subscribe;
 
+    @JsonIgnore
     private String openId;
 
     private String nickname;
@@ -50,6 +52,7 @@ public class MpUser implements Serializable {
 
     private Long subscribeTime;
 
+    @JsonIgnore
     private String unionId;
 
     private String remark;
@@ -62,8 +65,10 @@ public class MpUser implements Serializable {
 
     private String qrSceneStr;
 
+    @JsonIgnore
     private String name;
 
+    @JsonIgnore
     private String phone;
 
     private Date createTime;

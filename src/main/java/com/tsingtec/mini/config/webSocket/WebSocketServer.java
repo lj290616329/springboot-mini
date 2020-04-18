@@ -10,6 +10,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -111,6 +112,16 @@ public class WebSocketServer {
         this.session.getBasicRemote().sendText(message);
     }
 
+    /**
+     * 遍历群发消息
+     * 保持不掉线
+     * @param text
+     */
+    public static void send(String text)  throws IOException {
+        for (Map.Entry<String, WebSocketServer> entry : webSocketMap.entrySet()) {
+            webSocketMap.get(entry.getKey()).sendMessage(text);
+        }
+    }
 
     /**
      * 发送自定义消息

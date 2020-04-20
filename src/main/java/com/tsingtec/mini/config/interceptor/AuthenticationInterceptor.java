@@ -1,4 +1,4 @@
-package com.tsingtec.mini.config.mini.security;
+package com.tsingtec.mini.config.interceptor;
 
 import com.tsingtec.mini.aop.annotation.LoginToken;
 import com.tsingtec.mini.aop.annotation.PassToken;

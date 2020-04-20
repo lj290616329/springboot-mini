@@ -1,4 +1,4 @@
-package com.tsingtec.mini.config.mp.security.interceptor;
+package com.tsingtec.mini.config.interceptor;
 
 import com.tsingtec.mini.entity.mp.MpUser;
 import com.tsingtec.mini.service.MpUserService;

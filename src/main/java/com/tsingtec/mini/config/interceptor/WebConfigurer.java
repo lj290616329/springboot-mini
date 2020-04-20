@@ -1,7 +1,5 @@
-package com.tsingtec.mini.config.mp.config;
+package com.tsingtec.mini.config.interceptor;
 
-import com.tsingtec.mini.config.mini.security.AuthenticationInterceptor;
-import com.tsingtec.mini.config.mp.security.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

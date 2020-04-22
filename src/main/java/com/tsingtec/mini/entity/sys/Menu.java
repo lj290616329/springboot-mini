@@ -3,6 +3,7 @@ package com.tsingtec.mini.entity.sys;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.tsingtec.mini.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -23,13 +24,7 @@ import java.util.Set;
 @Table(name = "sys_menu")
 @ToString(exclude = {"roles"})
 @EqualsAndHashCode(exclude = {"roles"})
-public class Menu implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
-    private Integer id;
+public class Menu extends BaseEntity {
 
     private String name;
 
@@ -52,21 +47,11 @@ public class Menu implements Serializable {
 
     private Integer status;
 
-    private Date createTime;
-
-    private Date updateTime;
-
-
     @ManyToMany(mappedBy = "menus",fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Role> roles = new HashSet<>(0);
 
     public Menu(){
 
-    }
-
-    public Menu(Integer id, String name) {
-        this.id = id;
-        this.name = name;
     }
 }

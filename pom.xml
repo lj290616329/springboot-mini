@@ -61,12 +61,15 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!--微信小程序-->
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-miniapp</artifactId>
             <version>${weixin-java.version}</version>
         </dependency>
 
+        <!--微信公众号-->
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-mp</artifactId>
@@ -79,11 +82,7 @@
             <version>${json.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-spring</artifactId>
-            <version>${shiro.version}</version>
-        </dependency>
+
 
 
         <!-- cache -->
@@ -102,6 +101,11 @@
             <version>1.4.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
 
         <!--shiro 配合thymeleaf-->
         <dependency>

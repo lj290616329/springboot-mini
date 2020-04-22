@@ -1,6 +1,7 @@
 package com.tsingtec.mini.entity.shop;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.tsingtec.mini.entity.BaseEntity;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.DynamicInsert;
@@ -24,14 +25,7 @@ import java.util.Set;
 @DynamicInsert(true)
 @DynamicUpdate(true)
 @Table(name = "shop_goods")
-public class ShopGoods implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
-    private Integer id;
-
+public class ShopGoods extends BaseEntity {
     private String name;//商品名称
 
     private String tags;//标签
@@ -47,10 +41,6 @@ public class ShopGoods implements Serializable {
     private String pics;//详情图
 
     private Byte status=0;//状态，0为初始值 -1为删除
-
-    private Date createTime;//创建时间
-
-    private Date updateTime;//更新时间
 
     @Transient
     private Set<ShopGoodsType> types;

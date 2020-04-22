@@ -1,6 +1,7 @@
 package com.tsingtec.mini.entity.mp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tsingtec.mini.entity.BaseEntity;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.DynamicInsert;
@@ -21,13 +22,7 @@ import java.util.Date;
 @DynamicInsert(true)
 @DynamicUpdate(true)
 @Table(name = "wx_mp_user")
-public class MpUser implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
-    private Integer id;
+public class MpUser extends BaseEntity {
 
     private Boolean subscribe;
 
@@ -70,10 +65,6 @@ public class MpUser implements Serializable {
 
     @JsonIgnore
     private String phone;
-
-    private Date createTime;
-
-    private Date updateTime;
 
     public String getName() {
         if(StringUtils.isEmpty(name)) {

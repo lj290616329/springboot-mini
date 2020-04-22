@@ -83,11 +83,11 @@
         var websocket = null;
 
         function getWebSocket(){
-            var url = window.location.host.replace("http:","ws:");
-            console.log(url);
+            var url = window.location.origin.replace("http:","ws:");
+            console.log(window.location);
             //判断当前浏览器是否支持WebSocket
             if('WebSocket' in window){
-                websocket = new WebSocket("ws://17240k68p1.51mypc.cn//websocket/12adsafs");
+                websocket = new WebSocket(url+"/websocket/[[${token}]]");
             }else{
                 console.log('Not support websocket');
             }

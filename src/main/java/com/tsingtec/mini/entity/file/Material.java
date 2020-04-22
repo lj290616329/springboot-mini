@@ -1,5 +1,6 @@
 package com.tsingtec.mini.entity.file;
 
+import com.tsingtec.mini.entity.BaseEntity;
 import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -18,12 +19,7 @@ import java.util.Date;
 @DynamicInsert(true)
 @DynamicUpdate(true)
 @Table(name = "file_material")
-public class Material implements Serializable {
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
-    private Integer id;
+public class Material extends BaseEntity {
 
     private String name;//名称
 
@@ -35,7 +31,4 @@ public class Material implements Serializable {
 
     private Integer pid=0; //上级目录
 
-    private Date createTime; //新增时间
-
-    private Date updateTime; //最后更新时间
 }

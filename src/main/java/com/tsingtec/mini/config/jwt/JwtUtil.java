@@ -42,6 +42,23 @@ public class JwtUtil {
         return token;
     }
 
+    @Cacheable(key="#p1")
+    public String createToken(String claim,String val) {
+        System.out.println("没有缓存!");
+        Algorithm algorithm = Algorithm.HMAC256(jwtProperties.secretKey);
+        Date exp = new Date(System.currentTimeMillis() + jwtProperties.getTokenExpireTime()*60*1000l);
+        // 头部信息
+        Map<String, Object> header = new HashMap<String, Object>();
+        header.put("alg", "HS256");
+        header.put("typ", "JWT");
+        String token = JWT.create()
+                .withHeader(header)// 设置头部信息 Header
+                .withClaim(claim,val)
+                .withExpiresAt(exp)//设置 载荷 签名过期的时间
+                .sign(algorithm);//签名 Signature
+        return token;
+    }
+
     public boolean verify(String token){
         Algorithm algorithm = Algorithm.HMAC256(jwtProperties.secretKey);
         try {

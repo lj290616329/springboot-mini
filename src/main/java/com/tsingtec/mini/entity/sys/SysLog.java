@@ -1,5 +1,6 @@
 package com.tsingtec.mini.entity.sys;
 
+import com.tsingtec.mini.entity.BaseEntity;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -9,13 +10,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "sys_log")
-public class SysLog implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
-    private Integer id;
+public class SysLog extends BaseEntity {
 
     private Integer aid;
 
@@ -30,7 +25,5 @@ public class SysLog implements Serializable {
     private String params;
 
     private String ip;
-
-    private Date createTime;
 
 }

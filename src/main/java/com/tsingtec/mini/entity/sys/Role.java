@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.tsingtec.mini.entity.BaseEntity;
 import com.tsingtec.mini.vo.resp.sys.menu.MenuRespNode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,23 +31,12 @@ import java.util.Set;
 @Table(name = "sys_role")
 @ToString(exclude = {"admins", "menus"})
 @EqualsAndHashCode(exclude = {"admins", "menus"})
-public class Role implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
-    private Integer id;
-
+public class Role extends BaseEntity {
 	private String name;
 
     private String description;
 
     private Integer status;
-
-    private Date createTime;
-
-    private Date updateTime;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "sys_role_menu",joinColumns = @JoinColumn(name = "rid"),inverseJoinColumns = @JoinColumn(name = "mid"))

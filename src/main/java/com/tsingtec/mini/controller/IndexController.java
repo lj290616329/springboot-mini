@@ -1,6 +1,7 @@
 package com.tsingtec.mini.controller;
 
 
+import com.tsingtec.mini.config.jwt.JwtUtil;
 import com.tsingtec.mini.utils.DataResult;
 import com.tsingtec.mini.utils.RandomValidateCodeUtil;
 import com.tsingtec.mini.vo.req.sys.login.LoginReqVO;
@@ -10,12 +11,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 /**
@@ -28,8 +32,15 @@ import javax.validation.Valid;
 @RequestMapping("/index")
 public class IndexController {
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @GetMapping("/login")
-    public String login(){
+    public String login(HttpServletRequest request, Model model){
+        HttpSession session = request.getSession();
+        String sessionid = session.getId();
+        String token = jwtUtil.createToken("sessionid",sessionid);
+        model.addAttribute("token",token);
         return "login";
     }
 

@@ -1,6 +1,7 @@
 package com.tsingtec.mini.entity.sys;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tsingtec.mini.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -26,13 +27,7 @@ import java.util.Set;
 @Table(name = "sys_admin")
 @ToString(exclude = {"roles"})
 @EqualsAndHashCode(exclude = {"roles"})
-public class Admin implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
-    private Integer id;
+public class Admin extends BaseEntity{
 
     //0:禁止登录
     public static final Short UNVALID = -1;
@@ -53,12 +48,6 @@ public class Admin implements Serializable {
 
     /**盐*/
     private String salt;
-
-    /**创建时间*/
-    private Date createTime;
-
-    /**最后登录时间*/
-    private Date updateTime;
 
     /**0:有效，-1:禁止登录*/
     private Short status = VALID;

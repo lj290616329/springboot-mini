@@ -88,7 +88,6 @@ public class ShiroConfig {
 		securityManager.setCacheManager(ehCacheConfig.ehCacheManager());
 		// //注入session管理器;
 		securityManager.setSessionManager(sessionManager());
-
 		return securityManager;
 	}
 
@@ -154,6 +153,7 @@ public class ShiroConfig {
 		//sessionManager.setCacheManager(ehCacheManager());
 		sessionManager.setSessionDAO(enterCacheSessionDAO());
 		sessionManager.setSessionIdUrlRewritingEnabled(false);
+		sessionManager.setGlobalSessionTimeout(1800000);
 		return sessionManager;
 	}
 

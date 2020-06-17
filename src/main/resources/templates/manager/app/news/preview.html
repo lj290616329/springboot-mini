@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图文预览</title>
+</head>
+<style>
+    img{max-width: 100%;}
+</style>
+<body>
+<div class="layui-fluid">
+</div>
+</body>
+
+<script type="text/html" id="article">
+    {{if ifShowTitle}}
+        <div style="title">{{title}}</div>
+    {{/if}}
+    {{if ifShowPic}}
+        <img src="{{pic}}" style="width: 100%;">
+    {{/if}}
+    <div>{{#content}}</div>
+</script>
+<script src="/layuiadmin/layui/layui.js"></script>
+<script src="/js/template.js"></script>
+</html>
+<script>
+function child(obj) {
+    layui.use('jquery', function () {
+        var $ = layui.$;
+        var article = JSON.parse(JSON.stringify(obj));
+        var html = template("article", article);
+        layui.$(".layui-fluid").html(html);
+    })
+};
+</script>

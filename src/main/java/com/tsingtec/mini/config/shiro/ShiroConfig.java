@@ -1,33 +1,27 @@
 package com.tsingtec.mini.config.shiro;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
-import com.tsingtec.mini.config.cache.EhCacheConfig;
 import com.tsingtec.mini.filter.KickoutSessionFilter;
 import com.tsingtec.mini.filter.RetryLimitHashedCredentialsMatcher;
 import com.tsingtec.mini.filter.ShiroLoginFilter;
 import com.tsingtec.mini.filter.ShiroPermissionsFilter;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
-import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.authc.LogoutFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
-import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.Resource;
 import javax.servlet.Filter;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -42,8 +36,9 @@ import java.util.Map;
 @EnableTransactionManagement
 public class ShiroConfig {
 
-	@Resource
-	private EhCacheConfig ehCacheConfig;
+	@Resource(name="ehCacheManager")
+	private EhCacheManager ehCacheManager;
+
 	/**
 	 * ShiroFilterFactoryBean 处理拦截资源文件过滤器
 	 *	</br>1,配置shiro安全管理器接口securityManage;
@@ -63,12 +58,21 @@ public class ShiroConfig {
 		hashMap.put("authc", new ShiroLoginFilter());
 		hashMap.put("perms", new ShiroPermissionsFilter());
 
+		LogoutFilter logoutFilter = new LogoutFilter();
+		logoutFilter.setRedirectUrl("/index/login");
+
+		hashMap.put("logout", logoutFilter);
+
 		// filterChainDefinitions拦截器=map必须用：LinkedHashMap，因为它必须保证有序
 		shiroFilterFactoryBean.setLoginUrl("/index/login");
+
 		Map<String,String> filterMap = new LinkedHashMap<String,String>();
+
+		filterMap.put("/index/logout","logout");
 		filterMap.put("/index/**", "anon");
 		filterMap.put("/manager/**", "kickout,authc");
 		filterMap.put("/home/**", "kickout,authc");
+
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
 		shiroFilterFactoryBean.setFilters(hashMap);
 		log.debug("-----------------Shiro拦截器工厂类注入成功");
@@ -85,7 +89,7 @@ public class ShiroConfig {
 		// 设置realm.
 		securityManager.setRealm(shiroRealm());
 		// //注入ehcache缓存管理器;
-		securityManager.setCacheManager(ehCacheConfig.ehCacheManager());
+		securityManager.setCacheManager(ehCacheManager);
 		// //注入session管理器;
 		securityManager.setSessionManager(sessionManager());
 		return securityManager;
@@ -104,26 +108,16 @@ public class ShiroConfig {
 
 
 	/**
-	 * ehcache缓存管理器；shiro整合ehcache：
-	 * 通过安全管理器：securityManager
-	 * 单例的cache防止热部署重启失败
-	 * @return EhCacheManager
-	 */
-
-
-
-	/**
 	 * 凭证匹配器
 	 */
 	@Bean
 	public RetryLimitHashedCredentialsMatcher hashedCredentialsMatcher(){
-		RetryLimitHashedCredentialsMatcher retryLimitHashedCredentialsMatcher = new RetryLimitHashedCredentialsMatcher(ehCacheConfig.ehCacheManager());
+		RetryLimitHashedCredentialsMatcher retryLimitHashedCredentialsMatcher = new RetryLimitHashedCredentialsMatcher(ehCacheManager);
 		retryLimitHashedCredentialsMatcher.setHashAlgorithmName("SHA-256");//散列算法:MD2、MD5、SHA-1、SHA-256、SHA-384、SHA-512等。
 		retryLimitHashedCredentialsMatcher.setHashIterations(1024);//散列的次数，默认1次， 设置两次相当于 md5(md5(""));
 		retryLimitHashedCredentialsMatcher.setLimitCount(5);//账号登录重试次数
 		return retryLimitHashedCredentialsMatcher;
 	}
-
 
 	/**
 	 * 配置ShiroDialect，用于thymeleaf和shiro标签配合使用
@@ -138,10 +132,10 @@ public class ShiroConfig {
 	 * 提供了缓存功能的会话维护，默认情况下使用MapCache实现，内部使用ConcurrentHashMap保存缓存的会话。
 	 */
 	@Bean
-	public EnterpriseCacheSessionDAO enterCacheSessionDAO() {
+	public SessionDAO enterCacheSessionDAO() {
 		EnterpriseCacheSessionDAO enterCacheSessionDAO = new EnterpriseCacheSessionDAO();
 		//添加缓存管理器
-		//enterCacheSessionDAO.setCacheManager(ehCacheConfig.ehCacheManager());
+		//enterCacheSessionDAO.setCacheManager(ehCacheManager);
 		//添加ehcache活跃缓存名称（必须和ehcache缓存名称一致）
 		enterCacheSessionDAO.setActiveSessionsCacheName("shiro-activeSessionCache");
 		return enterCacheSessionDAO;
@@ -150,10 +144,16 @@ public class ShiroConfig {
 	@Bean
 	public DefaultWebSessionManager sessionManager() {
 		DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
-		//sessionManager.setCacheManager(ehCacheManager());
+		sessionManager.setCacheManager(ehCacheManager);
 		sessionManager.setSessionDAO(enterCacheSessionDAO());
+		//是否开启删除无效的session对象  默认为true
+		sessionManager.setDeleteInvalidSessions(true);
 		sessionManager.setSessionIdUrlRewritingEnabled(false);
-		sessionManager.setGlobalSessionTimeout(1800000);
+		//是否开启定时调度器进行检测过期session 默认为true
+		sessionManager.setSessionValidationSchedulerEnabled(true);
+		//全局会话超时时间（单位毫秒）1个小时
+		sessionManager.setGlobalSessionTimeout(60 * 1000 * 60);
+		sessionManager.setSessionValidationInterval(60 * 1000 * 10);
 		return sessionManager;
 	}
 
@@ -164,7 +164,7 @@ public class ShiroConfig {
 		//使用cacheManager获取相应的cache来缓存用户登录的会话；用于保存用户—会话之间的关系的；
 		//这里我们还是用之前shiro使用的ehcache实现的cacheManager()缓存管理
 		//也可以重新另写一个，重新配置缓存时间之类的自定义缓存属性
-		kickoutSessionFilter.setCacheManager(ehCacheConfig.ehCacheManager());
+		kickoutSessionFilter.setCacheManager(ehCacheManager);
 		//用于根据会话ID，获取会话进行踢出操作的；
 		kickoutSessionFilter.setSessionManager(sessionManager());
 		//是否踢出后来登录的，默认是false；即后者登录的用户踢出前者登录的用户；踢出顺序。

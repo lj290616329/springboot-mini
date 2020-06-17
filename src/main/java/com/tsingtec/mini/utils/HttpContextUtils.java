@@ -22,10 +22,6 @@ public class HttpContextUtils {
 		return getAdmin().getId();
 	}
 
-	public static Integer getUnionId() {
-		return getAdmin().getUnionId();
-	}
-
 	public static HttpServletRequest getHttpServletRequest() {
 		return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 	}
@@ -36,5 +32,9 @@ public class HttpContextUtils {
 		return ((accept != null && accept.indexOf("application/json") != -1
 				|| (xRequestedWith != null && xRequestedWith.indexOf("XMLHttpRequest") != -1)
 		));
+	}
+
+	public static String getToken(){
+		return getHttpServletRequest().getHeader("token");
 	}
 }

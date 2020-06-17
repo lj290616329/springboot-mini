@@ -5,6 +5,7 @@ import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 
 /**
@@ -21,7 +22,8 @@ public class EhCacheConfig {
      * 通过安全管理器：securityManager
      * @return EhCacheManager
      */
-    @Bean
+    @Order(1)
+    @Bean(name="ehCacheManager")
     public EhCacheManager ehCacheManager() {
         log.error("=====shiro整合ehcache缓存：ShiroConfiguration.getEhCacheManager()");
         EhCacheManager ehcache = new EhCacheManager();

@@ -9,8 +9,6 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,9 +40,6 @@ public class Admin extends BaseEntity{
 
     /**密码*/
     private String password;
-
-    /**登录帐号*/
-    private Integer unionId=0;
 
     /**盐*/
     private String salt;

@@ -8,6 +8,8 @@ public interface MpUserService {
 
     MpUser findByOpenId(String openId);
 
+    MpUser findByMiniOpenid(String miniOpenid);
+
     MpUser findByUnionId(String unionId);
 
     MpUser get(Integer id);

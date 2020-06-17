@@ -5,9 +5,9 @@
 * @Last Modified time: 2018-09-07 15:26:19
 */
 em{
-  font-style: normal;
+    font-style: normal;
 }
-#tags
+.tags
 {
     padding: 0 10px;
     color: #777;
@@ -15,7 +15,7 @@ em{
     background-color: #fff;
 }
 
-#tags span{
+.tags span{
     font-size: 12px;
     font-weight: normal;
     line-height: 16px;
@@ -33,7 +33,7 @@ em{
     background-color: #009688;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .15);
 }
-#tags .close{
+.tags .close{
     font-size: 12px;
     font-weight: bold;
     line-height: 20px;
@@ -52,8 +52,8 @@ em{
     background: transparent none repeat scroll 0 0;
     text-shadow: none;
 }
-#tags .close:hover{
-  background: #ffb800;
+.tags .close:hover{
+    background: #ffb800;
 }
 #inputTags[type='text'],
 #inputTags[type='text']:focus{

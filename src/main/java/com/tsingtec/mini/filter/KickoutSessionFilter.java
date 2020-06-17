@@ -1,7 +1,6 @@
 package com.tsingtec.mini.filter;
 
 import com.tsingtec.mini.entity.sys.Admin;
-import com.tsingtec.mini.utils.DataResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;

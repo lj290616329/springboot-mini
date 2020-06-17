@@ -12,11 +12,14 @@ var CoreUtil = {
      * @param async 同步异步
      */
     sendAjax :function (url, params, ft, method, contentType, async) {
-        var roleSaveLoading = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+        var roleSaveLoading;
         var $ = layui.jquery;
         $.ajax({
             url: url,
             cache: false,
+            beforeSend: function(){
+                roleSaveLoading = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+            },
             async: async == undefined ? true : async,
             data: params,
             type: method == undefined ? "POST" : method,
@@ -24,9 +27,8 @@ var CoreUtil = {
             dataType: "json",
             success: function (res) {
                 console.log(res);
-                top.layer.close(roleSaveLoading);
                 if (typeof ft == "function") {
-                    if(res.code == 200){
+                    if(res.code == 0){
                         if(ft!=null && ft!=undefined){
                             ft(res)
                         }
@@ -62,7 +64,6 @@ var CoreUtil = {
                 }
             },
             error:function (XMLHttpRequest, textStatus, errorThrown) {
-               top.layer.close(roleSaveLoading);
                if(XMLHttpRequest.status==404){
                     location.href="/index/404";
                }else{
@@ -70,7 +71,10 @@ var CoreUtil = {
                        window.location.href = "/index/500"
                    });
                }
-            }
+            },
+            complete: function () {
+                top.layer.close(roleSaveLoading);
+            },
         });
     },
     /*表单数据封装成 json String*/

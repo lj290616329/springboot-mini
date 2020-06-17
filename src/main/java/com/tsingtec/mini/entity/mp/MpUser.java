@@ -7,9 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @Author lj
@@ -21,7 +21,7 @@ import java.util.Date;
 @Entity
 @DynamicInsert(true)
 @DynamicUpdate(true)
-@Table(name = "wx_mp_user")
+@Table(name = "wx_common_user")
 public class MpUser extends BaseEntity {
 
     private Boolean subscribe;
@@ -48,6 +48,7 @@ public class MpUser extends BaseEntity {
     private Long subscribeTime;
 
     @JsonIgnore
+    @Column(unique = true)
     private String unionId;
 
     private String remark;
@@ -59,6 +60,9 @@ public class MpUser extends BaseEntity {
     private String qrScene;
 
     private String qrSceneStr;
+
+    @JsonIgnore
+    private String miniOpenid;//小程序openid
 
     @JsonIgnore
     private String name;

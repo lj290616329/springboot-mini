@@ -147,7 +147,7 @@ public class AdminServiceImpl implements AdminService {
         if(admin.getPassword().equals(encryptPassword(vo.getOldPwd(),salt))){
             String password = encryptPassword(vo.getNewPwd(),salt);
             admin.setPassword(password);
-            if(!org.springframework.util.StringUtils.isEmpty(vo.getName())){
+            if(!StringUtils.isEmpty(vo.getName())){
                 admin.setName(vo.getName());
             }
             adminRepository.save(admin);

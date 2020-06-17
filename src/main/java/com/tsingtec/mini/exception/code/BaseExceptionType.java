@@ -13,7 +13,7 @@ public enum BaseExceptionType {
      * 999 未知错误
      */
     UNAUTHORIZED_ERROR (-1,"登录凭证已过期，请重新登录"),
-    SUCCESS(200,"操作成功"),
+    SUCCESS(0,"操作成功"),
     USER_ERROR(400,"用户输入异常"),
     PERMISSION_ERROR(403,"您没有权限进行此操作"),
     SYSTEM_ERROR (500,"系统服务异常"),

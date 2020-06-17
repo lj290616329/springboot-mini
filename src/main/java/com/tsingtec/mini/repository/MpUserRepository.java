@@ -9,4 +9,6 @@ public interface MpUserRepository extends JpaRepository<MpUser, Integer>, JpaSpe
     MpUser findByOpenId(String openId);
 
     MpUser findByUnionId(String unionId);
+
+    MpUser findByMiniOpenid(String miniOpenid);
 }

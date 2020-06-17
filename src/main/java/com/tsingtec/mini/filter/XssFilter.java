@@ -2,7 +2,7 @@ package com.tsingtec.mini.filter;
 
 import com.tsingtec.mini.utils.XssHttpServletRequestWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -24,13 +24,13 @@ public class XssFilter implements Filter {
         String strExcludes = filterConfig.getInitParameter("excludes");
         String strEnabled = filterConfig.getInitParameter("enabled");
         //将不需要xss过滤的接口添加到列表中
-        if(StringUtils.isNotEmpty(strExcludes)){
+        if(!StringUtils.isEmpty(strExcludes)){
             String[] urls = strExcludes.split(",");
             for(String url:urls){
                 excludes.add(url);
             }
         }
-        if(StringUtils.isNotEmpty(strEnabled)){
+        if(!StringUtils.isEmpty(strEnabled)){
             enabled = Boolean.valueOf(strEnabled);
         }
     }
@@ -61,7 +61,7 @@ public class XssFilter implements Filter {
         if (excludes == null || excludes.isEmpty()) {
             return false;
         }
-        System.out.println("3121");
+        log.info("3121");
         String url = urlPath;
         for (String pattern : excludes) {
             Pattern p = Pattern.compile("^" + pattern);

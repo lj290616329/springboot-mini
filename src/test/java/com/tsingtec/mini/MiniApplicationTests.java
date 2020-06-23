@@ -3,13 +3,14 @@ package com.tsingtec.mini;
 import com.tsingtec.mini.config.qiniu.ConstantQiniu;
 import com.tsingtec.mini.service.*;
 import com.tsingtec.mini.service.impl.ArticleServiceImpl;
-import com.tsingtec.mini.vo.resp.app.mini.MiniUserInfoRespVO;
+import com.tsingtec.mini.vo.req.question.QuestionListRespVO;
 import com.vip.vjtools.vjkit.mapper.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @SpringBootTest
 class MiniApplicationTests {
@@ -23,6 +24,8 @@ class MiniApplicationTests {
     @Test
     void contextLoads() {
 
+        List<QuestionListRespVO> questionListRespVOS = questionService.getQuestionList();
+        System.out.println(questionListRespVOS.toString());
         /*ArticlePageReqVO articlePageReqVO = new ArticlePageReqVO();
         articlePageReqVO.setPageSize(5);
         Page<Article> articles = articleService.pageInfo(articlePageReqVO);
@@ -31,10 +34,10 @@ class MiniApplicationTests {
             System.out.println(article.toString());
         }*/
 
-        String userinfo = "{\"openId\":\"oWk8F5uPN-QZbwlMvfc-hGVq0H-A\",\"nickName\":\"妞，大爷来了\",\"gender\":\"1\",\"language\":\"zh_CN\",\"city\":\"\",\"province\":\"\",\"country\":\"Holy See (the) [Vatican City State]\",\"avatarUrl\":\"https://thirdwx.qlogo.cn/mmopen/vi_32/petsz7bmadgy178NEiaZRibYnA8BD3iaHkRNhYNNkgNU3TTej6IVCNbfp4x8x0ZX67TbYWAuiaj97s2tq5HMAxuLGQ/132\",\"unionId\":\"ofkfww9S7ahbdtIaQyOpQMSrzHXc\",\"watermark\":{\"timestamp\":\"1592301945\",\"appid\":\"wxffbd431d1affeacc\"}}";
+        /*String userinfo = "{\"openId\":\"oWk8F5uPN-QZbwlMvfc-hGVq0H-A\",\"nickName\":\"妞，大爷来了\",\"gender\":\"1\",\"language\":\"zh_CN\",\"city\":\"\",\"province\":\"\",\"country\":\"Holy See (the) [Vatican City State]\",\"avatarUrl\":\"https://thirdwx.qlogo.cn/mmopen/vi_32/petsz7bmadgy178NEiaZRibYnA8BD3iaHkRNhYNNkgNU3TTej6IVCNbfp4x8x0ZX67TbYWAuiaj97s2tq5HMAxuLGQ/132\",\"unionId\":\"ofkfww9S7ahbdtIaQyOpQMSrzHXc\",\"watermark\":{\"timestamp\":\"1592301945\",\"appid\":\"wxffbd431d1affeacc\"}}";
 
         MiniUserInfoRespVO miniUserInfoRespVO = mapper.fromJson(userinfo,MiniUserInfoRespVO.class);
-        System.out.println(miniUserInfoRespVO.toString());
+        System.out.println(miniUserInfoRespVO.toString());*/
         /*for (int i = 101; i < 200; i++) {
             ArticleAddReqVO article = new ArticleAddReqVO();
             article.setTitle("标题"+i);

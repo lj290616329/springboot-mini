@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @Author lj
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 public class ArticleUpdateReqVO {
 
     @ApiModelProperty(value = "文章id",name="id")
-    @NotBlank(message = "文章id不能为空")
+    @NotNull(message = "文章id不能为空")
     private Integer id;
 
     @ApiModelProperty(value = "文章标题",name="title")

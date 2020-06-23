@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/soulTable.css">
+    <link rel="stylesheet" href="/layuiadmin/style/admin.css">
+    <link rel="stylesheet" href="/layuiadmin/input-tags/inputTags.css">
+</head>
+<style>
+
+</style>
+<body>
+<div class="layui-fluid">
+    <form class="layui-form">
+
+    </form>
+</div>
+</body>
+<script type="text/html" id="question">
+    {{if question.id}}
+        <input type="hidden" name="id" value="{{question.id}}">
+    {{/if}}
+    <input type="hidden" id="groupName" name="groupName" value="{{question.groupName||types[0].name}}">
+    <input type="hidden" id="need" name="need" value="{{question.need}}">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">问题分组</label>
+            <div class="layui-input-inline">
+                <select name="groupSort" lay-filter="questionGroup">
+                    {{each types as type}}
+                        <option value="{{type.sort}}" {{if type.sort==question.groupSort}}selected{{/if}}>{{type.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">问题类型</label>
+            <div class="layui-input-inline">
+                <select name="type" lay-filter="type">
+                    <option value="radio" {{if question.type=='radio'}}selected{{/if}}>单选</option>
+                    <option value="checkbox" {{if question.type=='checkbox'}}selected{{/if}}>多选</option>
+                    <option value="input" {{if question.type=='input'}}selected{{/if}}>单行输入</option>
+                    <option value="picker" {{if question.type=='picker'}}selected{{/if}}>下拉选择</option>
+                    <option value="textarea" {{if question.type=='textarea'}}selected{{/if}}>多行输入</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline inputType" style="{{if question.type!='input'}}display: none;{{/if}}">
+            <label class="layui-form-label">输入类型</label>
+            <div class="layui-input-inline">
+                <select name="inputType">
+                    <option value="text" {{if question.inputType=='text'}}selected{{/if}}>文本输入</option>
+                    <option value="number" {{if question.inputType=='number'}}selected{{/if}}>纯数字</option>
+                    <option value="idcard" {{if question.inputType=='idcard'}}selected{{/if}}>身份证</option>
+                    <option value="digit" {{if question.inputType=='digit'}}selected{{/if}}>小数点数字</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline pickerMode" style="{{if question.type!='picker'}}display: none;{{/if}}">
+            <label class="layui-form-label">下拉类型</label>
+            <div class="layui-input-inline">
+                <select name="pickerMode" lay-filter="pickerMode">
+                    <option value="selector" {{if question.pickerMode=='selector'}}selected{{/if}}>输入形下拉</option>
+                    <option value="time" {{if question.pickerMode=='time'}}selected{{/if}}>时间</option>
+                    <option value="date" {{if question.pickerMode=='date'}}selected{{/if}}>日期</option>
+                    <option value="region" {{if question.pickerMode=='region'}}selected{{/if}}>省市区</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">题目</label>
+            <div class="layui-input-inline">
+                <input type="text" name="title"  placeholder="请输入题目(性别)" value="{{question.title}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">显示题目</label>
+            <div class="layui-input-inline">
+                <input type="showTitle" name="showTitle" placeholder="请输入显示题目(您的性别?)" value="{{question.showTitle}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">是否必填</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" name="required" value="{{question.required}}" lay-skin="switch" lay-filter="switchRequired" lay-text="是|否" {{if question.required}}checked{{/if}}>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">选项</label>
+        <div class="layui-input-block tags">
+            <input type="hidden" id="tags" name="options" value="{{question.options}}" lay-verify="{{if question.options}}required|limit{{/if}}" placeholder="请输入选项,回车添加选项" lay-reqtext="选项不能为空" autocomplete="off" class="layui-input">
+            <input type="text" id="inputTags" placeholder="请输入选项,回车添加选项" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">是否关联</label>
+            <div class="layui-input-inline" style="width: auto;">
+                <input type="checkbox" name="ifNeed" value="{{question.ifNeed}}" lay-skin="switch" lay-filter="switchIfNeed" lay-text="是|否" {{if question.ifNeed}}checked{{/if}}>
+            </div>
+        </div>
+        <div class="layui-inline needs" style="{{if !question.ifNeed}}display: none;{{/if}}">
+            <label class="layui-form-label">关联问题</label>
+            <div class="layui-input-inline">
+                <select id="needs" lay-filter="needs" lay-verify="{{if question.ifNeed}}required{{/if}}">
+                    <option value="">无关联问题</option>
+                    {{each radios as radio}}
+                        {{if question.needs}}
+                            <option {{if radio.id==question.needs[0]}}selected{{/if}} value="{{radio.id}}">{{radio.title}}</option>
+                        {{else}}
+                            <option value="{{radio.id}}">{{radio.title}}</option>
+                        {{/if}}
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline radios" style="width: auto;">
+
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+            <button type="button" class="layui-btn layui-btn-primary" id="back">返回</button>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="radio">
+    {{each optionList as option}}
+        <input type="radio" name="needVal" lay-filter="radioCheck" lay-verify="radioCheck" value="{{option}}" title="{{option}}" {{if option==needs[1]}}checked{{/if}}>
+    {{/each}}
+</script>
+<script src="/layuiadmin/layui/layui.js"></script>
+<script src="/js/template.js"></script>
+<script charset="utf-8" src="/js/editor/kindeditor-all-min.js?v=1"></script>
+<script charset="utf-8" src="/js/editor/lang/zh-CN.js"></script>
+</html>
+<script>
+    function child(obj){
+        layui.config({
+            base: '/layuiadmin/'//静态资源所在路径
+        }).extend({
+            inputTags : 'input-tags/inputTags',
+            CoreUtil : 'core-util/CoreUtil'
+        }).use(['form','jquery','CoreUtil','inputTags'],function() {
+            var form = layui.form
+                ,$ = layui.$
+                ,inputTags = layui.inputTags
+                ,CoreUtil = layui.CoreUtil;
+            function getResult(type) {
+                return new Promise(function (resolve, reject) {
+                    CoreUtil.sendAjax("/manager/"+type,{},function (res) {
+                        resolve(res.data);
+                    },"GET",'application/json; charset=UTF-8',false);
+                })
+            };
+
+            var question,radios;
+            var result = Promise.all([getResult("questionGroup"),getResult("question/radios")]);
+            result.then(function(data){
+                console.log(data);
+                radios = data[1];
+                question = JSON.parse(JSON.stringify(obj));
+                console.log(question);
+                var html = template("question",{question:question,types:data[0],radios:radios});
+                $(".layui-form").html(html);
+                form.render();
+
+                if(question.ifNeed){
+                    var radioQuestion = radios.find(function(x) {return x.id == question.needs[0];})||{};
+                    var html = template("radio",{optionList:radioQuestion.optionList,needs:question.needs});
+                    $(".radios").html(html);
+                    form.render();
+                }
+
+                console.log(question);
+                inputTags.render({
+                    elem:'#inputTags',//定义输入框input对象
+                    valinput:'#tags',
+                    content: question.optionList||[],//默认标签
+                    aldaBtn: false,//是否开启获取所有数据的按钮
+                    done: function(value){ //回车后的回调
+                        console.log(value)
+                    }
+                });
+                //监听分组
+                form.on('select(questionGroup)', function(data){
+                    console.log(data);
+                    $("#groupName").val(data.elem.selectedOptions[0].innerHTML);
+                });
+                //监听类型切换
+                form.on('select(type)', function(data){
+                    $(".inputType").hide();
+                    $(".pickerMode").hide();
+                    console.log(data);
+                    switch (data.value) {
+                        case 'radio':
+                            $('#tags').attr('lay-verify','required|limit');
+                            break;
+                        case 'checkbox':
+                            $('#tags').attr('lay-verify','required|limit');
+                            break;
+                        case 'input':
+                            //非必要输入
+                            $(".inputType").show();
+                            $('#tags').attr('lay-verify','');
+                            break;
+                        case 'picker':
+                            $(".pickerMode").show();
+                            $('#tags').attr('lay-verify','required|limit');
+                            break;
+                        case 'textarea':
+                            //非必要输入
+                            $('#tags').attr('lay-verify','');
+                            break;
+                    }
+                });
+                //监听picker类型变化
+                form.on('select(pickerMode)', function(data){
+                    if(data.value=='selector'){
+                        $('#tags').attr('lay-verify','required|limit');
+                    }else{
+                        $('#tags').attr('lay-verify','');
+                    }
+                });
+
+                //监听picker类型变化
+                form.on('radio(radioCheck)', function(data){
+                    console.log(data);
+                    var val = $("#need").val();
+                    $("#need").val(val.split(",")[0]+","+data.value);
+                });
+                form.on('select(needs)', function(data){
+                    console.log(this);
+                    console.log(data);
+                    if(data.value){
+                        $("#need").val(data.value);
+                        var radioQuestion = radios.find(function(x) {return x.id == data.value;});
+                        console.log(radioQuestion);
+                        if(radioQuestion.groupSort!=$("select[name='groupSort']").val()){
+                            $(data.elem).val("");
+                            form.render();
+                            layer.msg('请选择同分组的关联问题', {icon: 2});
+
+                            return;
+                        }
+                        if(radioQuestion.id ==$("input[name='id']").val()){
+                            layer.msg('不能选择自我关联', {icon: 2});
+                            $(data.elem).val("");
+                            form.render();
+                            return;
+                        }
+                        console.log(radioQuestion.needs)
+                        var html = template("radio",{optionList:radioQuestion.optionList||[],needs:radioQuestion.needs});
+                        $(".radios").html(html);
+                        form.render();
+                    }else{
+                        $(".radios").empty();
+                    }
+                });
+
+
+                //监听是否必填
+                form.on('switch(switchRequired)', function(data){
+                    console.log(data);
+                    $(this).val(this.checked ? "true" : "false");
+                });
+                //监听是否关联
+                form.on('switch(switchIfNeed)', function(data){
+                    console.log(data);
+                    $(this).val(this.checked ? "true" : "false");
+                    $(".needs").hide();
+                    $(".radios").empty();
+                    $("#needs").attr('lay-verify','');
+                    if(this.checked){
+                        $("#needs").attr('lay-verify','required');
+                        $(".needs").show();
+                    }
+                });
+
+                //自定义验证规则
+                form.verify({
+                    radioCheck: function(value,item){
+                        var $ = layui.$;
+                        var verifyName=$(item).attr('name')
+                            ,verifyType=$(item).attr('type')
+                            ,formElem=$(item).parents('.layui-form')//获取当前所在的form元素，如果存在的话
+                            ,verifyElem=formElem.find('input[name='+verifyName+']')//获取需要校验的元素
+                            ,isTrue= verifyElem.is(':checked')//是否命中校验
+                            ,focusElem = verifyElem.next().find('i.layui-icon');//焦点元素
+                        if(!isTrue || !value){
+                            //定位焦点
+                            focusElem.css(verifyType=='radio'?{"color":"#FF5722"}:{"border-color":"#FF5722"});
+                            //对非输入框设置焦点
+                            focusElem.first().attr("tabIndex","1").css("outline","0").blur(function() {
+                                focusElem.css(verifyType=='radio'?{"color":""}:{"border-color":""});
+                            }).focus();
+                            return '必填项不能为空';
+                        }
+                    },
+                    limit:function(val){
+                        if(val.split(",").length<2){
+                            return "请添加至少2个选项";
+                        }
+                    }
+                });
+
+                //监听提交
+                form.on('submit(submit)', function(obj){
+                    var data = obj.field;
+                    var type = "post";
+                    if(data.id!==undefined){
+                        type = "put";
+                    };
+
+                    console.log(data);
+                    CoreUtil.sendAjax("/manager/question",JSON.stringify(data),function(res){
+                        top.layer.msg(res.msg, {
+                            offset: 't',
+                            anim: 6,
+                        });
+                        back();
+                        //新增时进行新增
+                        window.parent.getTableData();;//刷新父页面
+                    },type,'application/json; charset=UTF-8',false);
+                    return false;
+                });
+                $("#back").click(function () {
+                    back();
+                });
+                //返回(实际就是关闭当前的窗口)
+                var back = function () {
+                    var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                    parent.layer.close(index);
+                }
+            });
+        });
+    }
+</script>

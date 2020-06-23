@@ -14,12 +14,11 @@
     }
 </style>
 <body>
-<div class="layui-fluid">
-    <div class="article_table_div">
-        <table  id="article_table" lay-filter="article_table"></table>
+    <div class="layui-fluid">
+        <div class="question_type_table_div">
+            <table  id="question_type_table" lay-filter="question_type_table"></table>
+        </div>
     </div>
-</div>
-
 </body>
 <script type="text/html" id="toolbar">
     <div class="layui-btn-group">
@@ -36,10 +35,6 @@
 <script type="text/html" id="tool">
     <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
     <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="preview"><i class="layui-icon layui-icon-cellphone-fine"></i>预览</a>
-</script>
-<script type="text/html" id="imgTpl">
-    <img class="head" src="{{d.pic}}"  style="width:30px; height:30px;">
 </script>
 <script src="/layuiadmin/layui/layui.js"></script>
 </html>
@@ -54,44 +49,34 @@
         tableMerge: 'modules/tableMerge',
         tableFilter: 'modules/tableFilter',
         excel: 'modules/excel',
-    }).use(['table','soulTable','laydate','transfer','CoreUtil'], function(){
+    }).use(['table','soulTable','CoreUtil'], function(){
         var table = layui.table,soulTable = layui.soulTable;
         var layer = layui.layer;
         var $ = jQuery = layui.jquery;
         var CoreUtil = layui.CoreUtil;
         //排序
         var sort = function(sorts){
-            CoreUtil.sendAjax("/manager/article/sort",JSON.stringify(sorts),function (res) {
+            CoreUtil.sendAjax("/manager/questionGroup/sort",JSON.stringify(sorts),function (res) {
                 getTableData();
             },"PUT",'application/json; charset=UTF-8',false);
         };
         //渲染table
-        var myTable = table.render({
-            id: 'article_table'
-            ,elem: '#article_table'
+        table.render({
+            id: 'question_type_table'
+            ,elem: '#question_type_table'
             ,cols: [
                 [
                     {type: 'checkbox', fixed: 'left'},
-                    {field: 'pic', title: '封面图', templet: '#imgTpl'},
-                    {field: 'title', title: '标题', width: 130, sort: true, filter: true},
-                    { field: 'tags', title: '文章标签' ,filter: true , templet: function (d) {
-                            var tags = d.tags.split(",");
-                            var html="";
-                            for(var  i=0;i<tags.length;i++){
-                                html +="<span class=\"layui-badge layui-bg-green\">"+tags[i]+"</span>"
-                            }
-                            return html;
-                        }
-                    },
-                    {field: 'createTime', title: '录入时间',width: 165,sort: true,filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
-                    {field: 'updateTime', title: '更新时间',width: 165,filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
+                    {field: 'name', title: '类型名称', sort: true, filter: true},
+                    {field: 'createTime', title: '录入时间',sort: true,filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
+                    {field: 'updateTime', title: '更新时间',filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
                     {width:300,toolbar:"#tool",title:'操作'}
                 ]
             ]
             ,height:"600"
             ,even: true
-            ,page: true
-            ,limit: 10
+            ,page: false
+            ,limit: 100
             ,toolbar:'#toolbar'
             ,rowDrag: {/*trigger: 'row',*/ done: function(obj) {
                 var sorts = new  Array();
@@ -100,23 +85,24 @@
                 if(obj.oldIndex>obj.newIndex){
                     arts = obj.cache.slice(obj.newIndex,obj.oldIndex+1);
                     $.each(arts,function(i,art){
-                        if(i==(arts.length-1)){
-                            sorts.push({id:art.id,toSort:arts[0].sort,oldSort:art.sort});
-                        }else{
-                            sorts.push({id:art.id,toSort:arts[i+1].sort,oldSort:art.sort});
-                        }
-                    });
-                }else{
-                    //从上往下提
-                    arts = obj.cache.slice(obj.oldIndex,obj.newIndex+1);
-                    $.each(arts,function(i,art){
                         if(i==0){
                             sorts.push({id:art.id,toSort:arts[arts.length-1].sort,oldSort:art.sort});
                         }else{
                             sorts.push({id:art.id,toSort:arts[i-1].sort,oldSort:art.sort});
                         }
                     });
+                }else{
+                    //从上往下提
+                    arts = obj.cache.slice(obj.oldIndex,obj.newIndex+1);
+                    $.each(arts,function(i,art){
+                        if(i==(arts.length-1)){
+                            sorts.push({id:art.id,toSort:arts[0].sort,oldSort:art.sort});
+                        }else{
+                            sorts.push({id:art.id,toSort:arts[i+1].sort,oldSort:art.sort});
+                        }
+                    });
                 };
+                //console.log(sorts)
                 sort(sorts);
             }}
             //应用拖拽排序
@@ -128,8 +114,8 @@
          * 分页获取账号
          */
         getTableData = function(){
-            CoreUtil.sendAjax("/manager/articles",{},function (res) {
-                table.reload('article_table', {
+            CoreUtil.sendAjax("/manager/questionGroup",{},function (res) {
+                table.reload('question_type_table', {
                     data: res.data
                 })
             },"GET",'application/json; charset=UTF-8',false);
@@ -142,7 +128,7 @@
         /**
          * 头部工具栏
          */
-        table.on('toolbar(article_table)', function(obj){
+        table.on('toolbar(question_type_table)', function(obj){
             var checkStatus = table.checkStatus(obj.config.id);
             switch(obj.event){
                 case 'batchDeleted':
@@ -159,14 +145,19 @@
                     }
                     break;
                 case 'add':
-                    edit({});
+                    layer.prompt({title: '请输入类型', formType: 3}, function(val, index){
+                        CoreUtil.sendAjax("/manager/questionGroup",val,function (res) {
+                            getTableData();
+                            layer.close(index);
+                        },"POST",'application/json; charset=UTF-8',false);
+                    });
                     break;
             };
         });
         /**
          * table 列工具栏
          */
-        table.on('tool(article_table)',function (obj) {
+        table.on('tool(question_type_table)',function (obj) {
             console.log(obj)
             var data = obj.data;
             switch (obj.event) {
@@ -176,33 +167,22 @@
                     tipDialog(userIds,data.name);
                     break;
                 case 'edit':
-                    edit(data);
+                    layer.prompt({title: '请输入类型',value:data.name, formType: 3}, function(val, index){
+                        CoreUtil.sendAjax("/manager/questionGroup",JSON.stringify({id:data.id,name:val}),function (res) {
+                            getTableData();
+                            layer.close(index);
+                        },"PUT",'application/json; charset=UTF-8',false);
+                    });
                     break;
                 case 'preview':
                     preview(data);
                     break;
             }
         });
-        var preview =function (obj) {
-            var ifr = layer.open({
-                title: "图文预览",
-                type: 2,
-                content: '/home/app/news/preview',
-                area: ['500px', '100%'],
-                offset: 'rt',
-                shadeClose: true,
-                success: function (layero, index) {
-                    // 获取子页面的iframe
-                    var iframe = window['layui-layer-iframe' + index];
-                    // 向子页面的全局函数child传参
-                    iframe.child(obj)
-                }
-            });
-            return false;
-        }
-        var tipDialog=function (userIds,username) {
+
+        var tipDialog = function (userIds,username) {
             layer.open({
-                content: '确定要删除['+username+"]用户么?",
+                content: '确定要删除['+username+"]类型么?",
                 yes: function(index, layero){
                     layer.close(index); //如果设定了yes回调，需进行手工关闭
                     CoreUtil.sendAjax("/manager/article",JSON.stringify(userIds),function (res) {
@@ -211,22 +191,6 @@
                     },"DELETE",'application/json; charset=UTF-8',false);
                 }
             });
-        };
-        var edit = function (obj) {
-            var ifr = layer.open({
-                title: "图文编辑",
-                type: 2,
-                closeBtn: 0,
-                content: '/home/app/news/form',
-                area: ['300px', '300px'],
-                success: function (layero, index) {
-                    // 获取子页面的iframe
-                    var iframe = window['layui-layer-iframe' + index];
-                    // 向子页面的全局函数child传参
-                    iframe.child(obj)
-                }
-            });
-            layer.full(ifr);
         };
     });
 </script>

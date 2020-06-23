@@ -89,7 +89,7 @@ layui.define(['jquery','layer'],function(exports){
     var that = this
     ,spans = ''
     ,options = that.config;
-    options.elem.focus();
+    //options.elem.focus();
     options.elem.keypress(function(event){
       var keynum = (event.keyCode ? event.keyCode : event.which);  
       if(keynum == '13'){  

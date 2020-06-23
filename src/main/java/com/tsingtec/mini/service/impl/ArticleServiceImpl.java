@@ -10,7 +10,7 @@ import com.tsingtec.mini.utils.BeanMapper;
 import com.tsingtec.mini.utils.BeanUtil;
 import com.tsingtec.mini.vo.req.news.ArticleAddReqVO;
 import com.tsingtec.mini.vo.req.news.ArticlePageReqVO;
-import com.tsingtec.mini.vo.req.news.ArticleSortReqVO;
+import com.tsingtec.mini.vo.req.sort.SortReqVO;
 import com.tsingtec.mini.vo.req.news.ArticleUpdateReqVO;
 import com.tsingtec.mini.vo.resp.news.ArticleRespVO;
 import org.apache.commons.lang3.StringUtils;
@@ -113,9 +113,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void sort(List<ArticleSortReqVO> sorts) {
+    public void sort(List<SortReqVO> sorts) {
         sorts.forEach(sort -> {
-            articleRepository.sortArticle(sort.getId(),sort.getSort());
+            articleRepository.sort(sort.getId(),sort.getToSort());
         });
     }
 }

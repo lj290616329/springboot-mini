@@ -7,7 +7,7 @@ import com.tsingtec.mini.utils.DataResult;
 import com.tsingtec.mini.utils.HttpContextUtils;
 import com.tsingtec.mini.vo.req.news.ArticleAddReqVO;
 import com.tsingtec.mini.vo.req.news.ArticlePageReqVO;
-import com.tsingtec.mini.vo.req.news.ArticleSortReqVO;
+import com.tsingtec.mini.vo.req.sort.SortReqVO;
 import com.tsingtec.mini.vo.req.news.ArticleUpdateReqVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -63,7 +63,7 @@ public class ArticleController {
     @ApiOperation(value = "修改图文接口")
     @RequiresPermissions("news:article:list")
     @LogAnnotation(title = "图文管理",action = "修改图文")
-    public DataResult sort(@RequestBody List<ArticleSortReqVO> vo){
+    public DataResult sort(@RequestBody List<SortReqVO> vo){
         articleService.sort(vo);
         return DataResult.success();
     }

@@ -136,9 +136,9 @@ public class JwtUtil {
             DecodedJWT jwt = verifier.verify(token);
             return jwt.getClaims().get(claim).asString();
         }catch (IllegalArgumentException e) {
-            throw new BusinessException(BaseExceptionType.TOKEN_ERROR,"token认证失败");
+            throw new BusinessException(BaseExceptionType.TOKEN_ERROR,"token认证失败1");
         }catch (JWTVerificationException e) {
-            throw new BusinessException(BaseExceptionType.TOKEN_ERROR,"token认证失败");
+            throw new BusinessException(BaseExceptionType.TOKEN_ERROR,"token认证失败2");
         }
     }
 }

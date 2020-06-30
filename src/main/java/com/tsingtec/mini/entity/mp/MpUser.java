@@ -1,15 +1,16 @@
 package com.tsingtec.mini.entity.mp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tsingtec.mini.entity.BaseEntity;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @Author lj
@@ -21,7 +22,8 @@ import java.util.Date;
 @Entity
 @DynamicInsert(true)
 @DynamicUpdate(true)
-@Table(name = "wx_mp_user")
+@Table(name = "wx_common_user")
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class MpUser extends BaseEntity {
 
     private Boolean subscribe;
@@ -48,6 +50,7 @@ public class MpUser extends BaseEntity {
     private Long subscribeTime;
 
     @JsonIgnore
+    @Column(unique = true)
     private String unionId;
 
     private String remark;
@@ -61,9 +64,10 @@ public class MpUser extends BaseEntity {
     private String qrSceneStr;
 
     @JsonIgnore
+    private String miniOpenid;//小程序openid
+
     private String name;
 
-    @JsonIgnore
     private String phone;
 
     public String getName() {

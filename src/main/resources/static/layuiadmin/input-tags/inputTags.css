@@ -5,25 +5,25 @@
 * @Last Modified time: 2018-09-07 15:26:19
 */
 em{
-  font-style: normal;
+    font-style: normal;
 }
-#tags
+.tags
 {
     padding: 0 10px;
     color: #777;
     border: 1px solid #d5d5d5;
     background-color: #fff;
+    display: flex;
 }
 
-#tags span{
+.tags span{
     font-size: 12px;
     font-weight: normal;
     line-height: 16px;
     position: relative;
     display: inline-block;
     height: 16px;
-    margin-right: 3px;
-    margin-bottom: 3px;
+    margin: auto 3px;
     padding: 4px 22px 5px 9px;
     cursor: pointer;
     transition: all .2s ease 0s;
@@ -33,7 +33,7 @@ em{
     background-color: #009688;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, .15);
 }
-#tags .close{
+.tags .close{
     font-size: 12px;
     font-weight: bold;
     line-height: 20px;
@@ -52,11 +52,12 @@ em{
     background: transparent none repeat scroll 0 0;
     text-shadow: none;
 }
-#tags .close:hover{
-  background: #ffb800;
+.tags .close:hover{
+    background: #ffb800;
 }
 #inputTags[type='text'],
 #inputTags[type='text']:focus{
+    flex:1;
     line-height: 25px;
     display: inline;
     width: 150px;

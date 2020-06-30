@@ -2,6 +2,8 @@ package com.tsingtec.mini.controller;
 
 
 import com.tsingtec.mini.config.jwt.JwtUtil;
+import com.tsingtec.mini.entity.sys.Admin;
+import com.tsingtec.mini.service.AdminService;
 import com.tsingtec.mini.utils.DataResult;
 import com.tsingtec.mini.utils.RandomValidateCodeUtil;
 import com.tsingtec.mini.vo.req.sys.login.LoginReqVO;
@@ -10,7 +12,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
+import org.apache.shiro.web.subject.WebSubject;
+import org.apache.shiro.web.subject.WebSubject.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,9 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-
 /**
  *
  * 无需授权就可以进入的页面
@@ -33,22 +38,61 @@ import javax.validation.Valid;
 public class IndexController {
 
     @Autowired
+    private AdminService adminService;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     @GetMapping("/login")
     public String login(HttpServletRequest request, Model model){
-        HttpSession session = request.getSession();
-        String sessionid = session.getId();
-        String token = jwtUtil.createToken("sessionid",sessionid);
-        model.addAttribute("token",token);
+        Subject subject = SecurityUtils.getSubject();
+        if(subject.isAuthenticated()){
+            return "redirect:/home/index";
+        };
         return "login";
     }
 
-    @GetMapping("/logout")
-    public String logout(){
-        Subject subject = SecurityUtils.getSubject();
-        subject.logout();
-        return "login";
+    @ResponseBody
+    @GetMapping("getToken")
+    public DataResult<String> getToken(HttpServletRequest request){
+        DataResult<String> result = DataResult.success();
+        String sessionid = request.getSession().getId();
+        String token = jwtUtil.loginToken(sessionid);
+        result.setData(token);
+        return result;
+    }
+
+    @ResponseBody
+    @PostMapping("/verify")
+    public DataResult verify(HttpServletRequest request,HttpServletResponse response,@RequestBody String token){
+        if(!jwtUtil.verify(token)){
+           return DataResult.getResult(-1,"二维码过期,请重新生成二维码");
+        }
+        String sessionid = jwtUtil.getClaim(token,"sessionid");
+        String aggreToken = jwtUtil.getAgree(sessionid);
+        System.out.println(aggreToken);
+        if(StringUtils.isEmpty(aggreToken)){
+            return DataResult.getResult(1,"别急,还没同意呢.");
+        }else {
+            if(!jwtUtil.verify(aggreToken)){
+                return DataResult.getResult(-1,"二维码过期,请重新生成二维码!");
+            }
+            String loginName = jwtUtil.getClaim(aggreToken,"loginName");
+            if(StringUtils.isEmpty(loginName)){
+                return DataResult.getResult(2,"用户拒绝登录,请重新扫描二维码进行验证!");
+            }
+
+            Admin admin = adminService.findByLoginName(loginName);
+            PrincipalCollection principals = new SimplePrincipalCollection(admin, loginName);
+            Builder builder = new WebSubject.Builder(request,response);
+            builder.principals(principals);
+            builder.authenticated(true);
+            builder.sessionId(request.getSession().getId());
+            WebSubject  subject = builder.buildWebSubject();
+            ThreadContext.bind(subject);
+
+            return DataResult.success();
+        }
     }
 
     @GetMapping("/kaptcha")
@@ -97,6 +141,10 @@ public class IndexController {
         }
         return result;
     }
+
+
+
+
 
     @GetMapping("/403")
     public String error403(){

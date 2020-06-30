@@ -13,12 +13,14 @@ public enum BaseExceptionType {
      * 999 未知错误
      */
     UNAUTHORIZED_ERROR (-1,"登录凭证已过期，请重新登录"),
-    SUCCESS(200,"操作成功"),
+    SUCCESS(0,"操作成功"),
     USER_ERROR(400,"用户输入异常"),
     PERMISSION_ERROR(403,"您没有权限进行此操作"),
     SYSTEM_ERROR (500,"系统服务异常"),
     OTHER_ERROR(999,"未知异常,请联系管理员"),
-    TOKEN_ERROR(401,"token错误");
+    TOKEN_ERROR(401,"token错误"),
+
+    MINI_ERROR (406,"token超时");//小程序错误返回
 
     BaseExceptionType(int code, String msg) {
         this.code = code;

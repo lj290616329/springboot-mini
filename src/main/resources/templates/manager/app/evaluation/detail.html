@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css">
+    <link rel="stylesheet" href="/layuiadmin/style/admin.css">
+</head>
+<body>
+<div class="layui-hide">
+    <div class="layui-main">
+        <form class="layui-form" action="" id="result">
+            <div class="formItems" style="padding: 10px;">
+
+
+
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+<div class="layui-fluid"></div>
+</body>
+<script type="text/html" id="detail">
+        <div class="layui-col-md2">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>个人信息</legend>
+            </fieldset>
+            <div class="layadmin-homepage-panel layadmin-homepage-shadow">
+                <div class="layui-card text-center">
+                    <div class="layui-card-body">
+                        <div class="layadmin-homepage-pad-ver">
+                            <img class="layadmin-homepage-pad-img" src="{{information.mpUser.headImgUrl}}" width="96" height="96">
+                        </div>
+                        <h4 class="layadmin-homepage-font">姓名:{{information.name}}</h4>
+                        <p class="layadmin-homepage-min-font">手机:{{information.phone}}</p>
+                        <p class="layadmin-homepage-min-font">性别:{{information.sex==1?'男':'女'}}</p>
+                        <p class="layadmin-homepage-min-font">年龄:{{information.age}}</p>
+                        <p class="layadmin-homepage-min-font">婚姻:{{if information.marry==1}}已婚{{else if information.marry==2}}未婚{{else if information.marry==3}}离异{{else}}丧偶{{/if}}</p>
+                        <p class="layadmin-homepage-min-font">职业:{{information.profession}}</p>
+                        <p class="layadmin-homepage-min-font">籍贯:{{information.domicile}}</p>
+                        <p class="layadmin-homepage-min-font">常住地址:{{information.address}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md10">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>测评详细</legend>
+            </fieldset>
+            <div class="layui-collapse" lay-filter="test">
+                {{each contents as content}}
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title">{{content.name}}</h2>
+                    <div class="layui-colla-content">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col>
+                                <col width="200">
+                            </colgroup>
+                            <tbody>
+                            {{each content.questionList as question}}
+                            <tr>
+                                <td>{{question.title}}</td>
+                                <td>{{question.value}}</td>
+                            </tr>
+                            {{/each}}
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                <legend>处理详细</legend>
+            </fieldset>
+            <div class="layui-collapse" lay-filter="test">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title">处理详细</h2>
+                    <div class="layui-colla-content" style="padding: 0;">
+                        <table class="layui-hide" id="results" lay-filter="results"></table>
+                        <div class="layui-form-item">
+                            <button class="layui-btn" onclick="submit()">提交</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+</script>
+<script type="text/html" id="formbody">
+    <input type="hidden" name="index" value="{{index}}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">反馈标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" value="{{title}}" lay-verify="required" autocomplete="off" placeholder="请输入反馈标题"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">具体内容</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入内容" class="layui-textarea" name="value" lay-verify="required" >{{value}}</textarea>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-group">
+        <button type="button" class="layui-btn" lay-event="addNewUser">
+            <i class="layui-icon layui-icon-addition"></i> 新增用户
+        </button>
+    </div>
+    <div class="layui-btn-group">
+        <button type="button" class="layui-btn" lay-event="batchDeleted">
+            <i class="layui-icon layui-icon-delete"></i> 批量删除
+        </button>
+    </div>
+</script>
+<script type="text/html" id="tool">
+    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i
+            class="layui-icon layui-icon-delete"></i>删除</a>
+</script>
+<script src="/layuiadmin/layui/layui.js"></script>
+<script src="/js/template.js"></script>
+</html>
+<script>
+var results,loadTable,add,edit,fr,submit;
+function child(id){
+    layui.config({
+        base: '/layuiadmin/'//静态资源所在路径
+    }).extend({
+        CoreUtil: 'core-util/CoreUtil'
+    }).use(['element','table', 'CoreUtil'], function () {
+        var element = layui.element;
+        var $ = jQuery = layui.jquery;
+        var CoreUtil = layui.CoreUtil;
+        var table = layui.table;
+        var form = layui.form;
+        CoreUtil.sendAjax("/manager/evaluation/"+id,{},function (res) {
+            console.log(res);
+            var html = template("detail",res.data);
+            $(".layui-fluid").html(html);
+
+            loadTable = function (data) {
+                results = data;
+                table.render({
+                    elem: '#results'
+                    ,cellMinWidth: 80
+                    , cols: [
+                        [
+                            {field: 'title', title: '反馈标题'},
+                            {field: 'value', title: '登录账号'},
+                            {width: 200, toolbar: "#tool", title: '<a class="layui-btn layui-btn-xs" onclick="add();"><i class="layui-icon layui-icon-addition"></i> 添加</a>'}
+                        ]
+                    ]
+                    , data: results
+                    , even: true
+                    , page: false
+
+                });
+            };
+            loadTable(res.data.results||[]);
+            element.init();
+            form.render();
+        },"GET",'application/json; charset=UTF-8',false);
+
+        table.on('tool(results)',function (obj) {
+            console.log(obj)
+            var data = obj.data;
+            var $this = $(this);
+            var tr = $this.parents('tr');
+            var trIndex = tr.data('index');
+            switch (obj.event) {
+                case 'edit':
+                    data.index = trIndex;
+                    edit(data);
+                    break;
+                case 'del':
+                    results.splice(trIndex,1);
+                    loadTable(results);
+                    break;
+            }
+        });
+        form.on('submit(submit)', function(res){
+            console.log(res);
+            var data = res.field;
+            console.log(data.index);
+            if(data.index!=''){
+                results[data.index] = data;
+            }else {
+                results.push(data);
+            }
+            console.log(results);
+            loadTable(results);
+            layer.close(fr);
+            return false;
+        });
+
+        edit = function (obj) {
+            var html = template("formbody", obj);
+            $(".formItems").html(html);
+            fr = layer.open({
+                type: 1,
+                title: false,
+                closeBtn: 0,
+                shadeClose: true,
+                area: ['520px', 'auto'],
+                content: $(".layui-main").html()
+            });
+        };
+        add = function (){
+            edit({});
+        };
+        submit = function () {
+            var obj = {
+                id:id,
+                vos:results
+            };
+            CoreUtil.sendAjax("/manager/evaluation",JSON.stringify(obj),function (res) {
+                top.layer.msg(res.msg, {
+                    offset: 't',
+                    anim: 6,
+                });
+                var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                parent.layer.close(index);
+            },"PUT",'application/json; charset=UTF-8',false);
+
+        }
+    });
+}
+</script>

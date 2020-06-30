@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/soulTable.css">
+    <link rel="stylesheet" href="/layuiadmin/style/admin.css">
+</head>
+<style>
+    .layui-badge {
+        margin-right: 2px;
+    }
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="evaluation_table_div">
+        <table  id="evaluation_table" lay-filter="evaluation_table"></table>
+    </div>
+</div>
+
+</body>
+<script type="text/html" id="tool">
+    <a class="layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-edit"></i>处理回复</a>
+</script>
+<script type="text/html" id="imgTpl">
+    <img class="head" src="{{d.information.mpUser.headImgUrl}}"  style="width:30px; height:30px;">
+</script>
+<script src="/layuiadmin/layui/layui.js"></script>
+</html>
+<script>
+    var getTableData;
+    layui.config({
+        base: '/layuiadmin/'//静态资源所在路径
+    }).extend({
+        CoreUtil : 'core-util/CoreUtil',
+        soulTable: 'modules/soulTable',
+        tableChild: 'modules/tableChild',
+        tableMerge: 'modules/tableMerge',
+        tableFilter: 'modules/tableFilter',
+        excel: 'modules/excel',
+    }).use(['table','soulTable','laydate','transfer','CoreUtil'], function(){
+        var table = layui.table,soulTable = layui.soulTable;
+        var layer = layui.layer;
+        var $ = jQuery = layui.jquery;
+        var CoreUtil = layui.CoreUtil;
+        //渲染table
+        var myTable = table.render({
+            id: 'evaluation_table'
+            ,elem: '#evaluation_table'
+            ,cols: [
+                [
+                    {field: 'headImgUrl',width: 80, title: '头像', templet: '#imgTpl'},
+                    {field: 'information.mpUser.name', title: '姓名',filter:true, width: 130,templet: function (item) {
+                            return item.information.mpUser.name;
+                        }
+                    },
+                    {field: 'createTime', title: '录入时间',filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
+                    {field: 'updateTime', title: '更新时间',filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
+                    {width:300,toolbar:"#tool",title:'操作'}
+                ]
+            ]
+            ,height:"400"
+            ,even: true
+            ,page: true
+            ,limit: 10
+            ,drag: false
+            ,done: function () {
+                soulTable.render(this)
+            }
+        });
+        /**
+         * 分页获取账号
+         */
+        getTableData = function(){
+            CoreUtil.sendAjax("/manager/evaluation",{},function (res) {
+                table.reload('evaluation_table', {
+                    data: res.data
+                })
+            },"GET",'application/json; charset=UTF-8',false);
+        };
+        /**
+         *获取一次数据
+         */
+        getTableData();
+
+        /**
+         * table 列工具栏
+         */
+        table.on('tool(evaluation_table)',function (obj) {
+            console.log(obj)
+            var data = obj.data;
+            switch (obj.event) {
+                case 'detail':
+                    detail(data.id);
+                    break;
+            }
+        });
+
+        var detail = function (id) {
+            var ifr = layer.open({
+                title: "测评详细",
+                type: 2,
+                content: '/home/app/evaluation/detail',
+                area: ['300px', '300px'],
+                success: function (layero, index) {
+                    // 获取子页面的iframe
+                    var iframe = window['layui-layer-iframe' + index];
+                    // 向子页面的全局函数child传参
+                    iframe.child(id)
+                }
+            });
+            layer.full(ifr);
+        };
+    });
+</script>

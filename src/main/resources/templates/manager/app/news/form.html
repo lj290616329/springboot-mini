@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/soulTable.css">
+    <link rel="stylesheet" href="/layuiadmin/style/admin.css">
+    <link rel="stylesheet" href="/layuiadmin/input-tags/inputTags.css">
+</head>
+<style>
+
+</style>
+<body>
+<div class="layui-fluid">
+    <form class="layui-form">
+
+    </form>
+</div>
+</body>
+<script type="text/html" id="article">
+    {{if id}}
+        <input type="hidden" name="id" value="{{id}}">
+    {{/if}}
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">文章标题</label>
+            <div class="layui-input-inline">
+                <input type="text" name="title" value="{{title}}" lay-verify="required" autocomplete="off" placeholder="请输入文章标题" lay-reqtext="请输入文章标题" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline">
+                <input type="checkbox" name="ifShowTitle"  value="{{ifShowTitle}}" lay-skin="switch" lay-filter="switchTest"  {{if ifShowTitle}}checked{{/if}} lay-text="显示|隐藏">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">文章简介</label>
+        <div class="layui-input-block">
+            <input type="text" name="description" value="{{description}}" placeholder="请输入文章简介" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">文章标签</label>
+        <div class="layui-input-block tags">
+            <input type="hidden" id="tags" name="tags" value="{{tags}}" lay-verify="required" placeholder="请输入文章标签" lay-reqtext="请输入文章标签" autocomplete="off" class="layui-input">
+            <input type="text" id="inputTags" placeholder="请输入文章标签" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">封面图片</label>
+            <div class="layui-input-block">
+                <input id="pic"  name="pic" value="{{pic}}" lay-verify="required" readonly="readonly" placeholder="图片地址" lay-reqtext="请上传封面图片" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline" style="width: auto;">
+                <button type="button" class="layui-btn layui-btn-primary" id="picBtn">
+                    <i class="layui-icon"></i>上传图片
+                </button>
+                <button type="button" class="layui-btn layui-btn-primary" id="picPreview">查看图片</button>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline">
+                <input type="checkbox" name="ifShowPic" value="{{ifShowPic}}" lay-skin="switch" lay-filter="switchTest" lay-text="显示|隐藏" {{if ifShowPic}}checked{{/if}}>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">文章内容</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea" lay-verify="content" name="content" id="content">{{content | htmlspecialchars}}</textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <button type="button" class="layui-btn layui-btn-primary" id="back">返回</button>
+                <button class="layui-btn layui-btn-primary" id="preview" lay-filter="preview" lay-submit>预览</button>
+            </div>
+        </div>
+    </div>
+</script>
+<script src="/layuiadmin/layui/layui.js"></script>
+<script src="/js/template.js"></script>
+<script charset="utf-8" src="/js/editor/kindeditor-all-min.js?v=1"></script>
+<script charset="utf-8" src="/js/editor/lang/zh-CN.js"></script>
+</html>
+<script>
+function child(obj){
+    layui.config({
+        base: '/layuiadmin/'//静态资源所在路径
+    }).extend({
+        inputTags : 'input-tags/inputTags',
+        CoreUtil : 'core-util/CoreUtil'
+    }).use(['form', 'laydate','layer','jquery','upload','CoreUtil','inputTags'],function() {
+        var form = layui.form
+            ,layer = layui.layer
+            ,upload = layui.upload
+            ,$ = layui.$
+            ,inputTags = layui.inputTags
+            ,CoreUtil = layui.CoreUtil;
+        var article = JSON.parse(JSON.stringify(obj));
+        var html = template("article",article);
+        $(".layui-form").html(html);
+        form.render();
+        var editor;
+        editor = KindEditor.create('#content', {
+            height : "500px",
+            width : "100%",
+            resizeType : 1,
+            syncType : "form",
+            filterMode : true,
+            items : [
+                'source', '|', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+                'removeformat', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+                'insertunorderedlist', '|', 'emoticons', 'image', 'link', , 'unlink', '|',
+                'lineheight', 'quickformat', 'hr', 'table', 'fullscreen','preview'],
+            filePostName: "file",
+            uploadJson : '/api/upload/qiniu',
+            cssData : "img{max-width:100%;}"
+        });
+
+        inputTags.render({
+            elem:'#inputTags',//定义输入框input对象
+            valinput:'#tags',
+            content: article.tags.split(","),//默认标签
+            aldaBtn: false,//是否开启获取所有数据的按钮
+            done: function(value){ //回车后的回调
+                console.log(value)
+            }
+        });
+        //封面图片上传
+        upload.render({
+            elem: '#picBtn'
+            ,url: '/api/upload/qiniu' //改成您自己的上传接口
+            ,done: function(res){
+                //如果上传失败
+                if(res.code == 0){
+                    $("#pic").val(res.data.src);
+                    return layer.msg('上传成功');
+                }
+            }
+            ,error: function(){
+                return layer.msg('上传失败');
+            }
+        });
+        //开关切换
+        form.on('switch(switchTest)', function(){
+            $(this).val(this.checked ? "true" : "false");
+        });
+        //封面图预览
+        $("#picPreview").click(function (data) {
+            var src =$("#pic").val();
+            if(src){
+                var pics = {
+                    "status": 1,
+                    "title": "封面图",
+                    "start": 0,
+                    "data": [
+                        {
+                            "alt": "封面图",
+                            "pid": 109,
+                            "src": src,
+                            "thumb": ""
+                        }
+                    ]
+                };
+                return layer.photos({
+                    photos: pics //格式见API文档手册页
+                    ,anim: 0 //0-6的选择，指定弹出图片动画类型，默认随机
+                });
+            }
+            return layer.msg('请先上传封面图片');
+        });
+        //内容预览
+        form.on('submit(preview)', function(obj){
+            console.log(obj);
+            var ifr = layer.open({
+                title: "图文预览",
+                type: 2,
+                content: '/home/app/news/preview',
+                area: ['500px', '100%'],
+                offset: 'rt',
+                shadeClose: true,
+                success: function (layero, index) {
+                    // 获取子页面的iframe
+                    var iframe = window['layui-layer-iframe' + index];
+                    // 向子页面的全局函数child传参
+                    iframe.child(obj.field)
+                }
+            });
+            return false;
+        });
+
+        //自定义验证规则
+        form.verify({
+            content: function(val){
+                editor.sync();
+                if(!$("#content").val()){
+                    return '文章内容不能为空';
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(submit)', function(obj){
+            var data = obj.field;
+            var type = "post";
+            if(data.id!==undefined){
+                type = "put";
+            };
+            CoreUtil.sendAjax("/manager/article",JSON.stringify(data),function(res){
+                top.layer.msg(res.msg, {
+                    offset: 't',
+                    anim: 6,
+                });
+                back();
+                //新增时进行新增
+                window.parent.getTableData();;//刷新父页面
+            },type,'application/json; charset=UTF-8',false);
+            return false;
+        });
+        $("#back").click(function () {
+           back();
+        });
+        //返回(实际就是关闭当前的窗口)
+        var back = function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);
+        }
+    });
+
+}
+</script>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/soulTable.css">
+    <link rel="stylesheet" href="/layuiadmin/style/admin.css">
+</head>
+<style>
+    .layui-badge {
+        margin-right: 2px;
+    }
+</style>
+<body>
+    <div class="layui-fluid">
+        <div class="question_type_table_div">
+            <table  id="question_type_table" lay-filter="question_type_table"></table>
+        </div>
+    </div>
+</body>
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-group">
+        <button type="button" class="layui-btn" lay-event="add">
+            <i class="layui-icon layui-icon-addition"></i> 新增
+        </button>
+    </div>
+    <div class="layui-btn-group">
+        <button type="button" class="layui-btn" lay-event="batchDeleted">
+            <i class="layui-icon layui-icon-delete"></i> 批量删除
+        </button>
+    </div>
+</script>
+<script type="text/html" id="tool">
+    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</script>
+<script src="/layuiadmin/layui/layui.js"></script>
+</html>
+<script>
+    var getTableData;
+    layui.config({
+        base: '/layuiadmin/'//静态资源所在路径
+    }).extend({
+        CoreUtil : 'core-util/CoreUtil',
+        soulTable: 'modules/soulTable',
+        tableChild: 'modules/tableChild',
+        tableMerge: 'modules/tableMerge',
+        tableFilter: 'modules/tableFilter',
+        excel: 'modules/excel',
+    }).use(['table','soulTable','CoreUtil'], function(){
+        var table = layui.table,soulTable = layui.soulTable;
+        var layer = layui.layer;
+        var $ = jQuery = layui.jquery;
+        var CoreUtil = layui.CoreUtil;
+        //排序
+        var sort = function(sorts){
+            CoreUtil.sendAjax("/manager/questionGroup/sort",JSON.stringify(sorts),function (res) {
+                getTableData();
+            },"PUT",'application/json; charset=UTF-8',false);
+        };
+        //渲染table
+        table.render({
+            id: 'question_type_table'
+            ,elem: '#question_type_table'
+            ,cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'},
+                    {field: 'name', title: '类型名称', sort: true, filter: true},
+                    {field: 'createTime', title: '录入时间',sort: true,filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
+                    {field: 'updateTime', title: '更新时间',filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
+                    {width:300,toolbar:"#tool",title:'操作'}
+                ]
+            ]
+            ,height:"600"
+            ,even: true
+            ,page: false
+            ,limit: 100
+            ,toolbar:'#toolbar'
+            ,rowDrag: {/*trigger: 'row',*/ done: function(obj) {
+                var sorts = new  Array();
+                var arts = new  Array();
+                //从下往上提
+                if(obj.oldIndex>obj.newIndex){
+                    arts = obj.cache.slice(obj.newIndex,obj.oldIndex+1);
+                    $.each(arts,function(i,art){
+                        if(i==0){
+                            sorts.push({id:art.id,toSort:arts[arts.length-1].sort,oldSort:art.sort});
+                        }else{
+                            sorts.push({id:art.id,toSort:arts[i-1].sort,oldSort:art.sort});
+                        }
+                    });
+                }else{
+                    //从上往下提
+                    arts = obj.cache.slice(obj.oldIndex,obj.newIndex+1);
+                    $.each(arts,function(i,art){
+                        if(i==(arts.length-1)){
+                            sorts.push({id:art.id,toSort:arts[0].sort,oldSort:art.sort});
+                        }else{
+                            sorts.push({id:art.id,toSort:arts[i+1].sort,oldSort:art.sort});
+                        }
+                    });
+                };
+                //console.log(sorts)
+                sort(sorts);
+            }}
+            //应用拖拽排序
+            ,done: function () {
+                soulTable.render(this)
+            }
+        });
+        /**
+         * 分页获取账号
+         */
+        getTableData = function(){
+            CoreUtil.sendAjax("/manager/questionGroup",{},function (res) {
+                table.reload('question_type_table', {
+                    data: res.data
+                })
+            },"GET",'application/json; charset=UTF-8',false);
+        };
+        /**
+         *获取一次数据
+         */
+        getTableData();
+
+        /**
+         * 头部工具栏
+         */
+        table.on('toolbar(question_type_table)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'batchDeleted':
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    var data = checkStatus.data;
+                    if(data.length==0){
+                        layer.msg("请选择要批量删除的用户");
+                    }else {
+                        var userIds = [];
+                        $(data).each(function (index,item) {
+                            userIds.push(item.id);
+                        });
+                        tipDialog(userIds,"选中的");
+                    }
+                    break;
+                case 'add':
+                    layer.prompt({title: '请输入类型', formType: 3}, function(val, index){
+                        CoreUtil.sendAjax("/manager/questionGroup",val,function (res) {
+                            getTableData();
+                            layer.close(index);
+                        },"POST",'application/json; charset=UTF-8',false);
+                    });
+                    break;
+            };
+        });
+        /**
+         * table 列工具栏
+         */
+        table.on('tool(question_type_table)',function (obj) {
+            console.log(obj)
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    var userIds=[];
+                    userIds.push(data.id);
+                    tipDialog(userIds,data.name);
+                    break;
+                case 'edit':
+                    layer.prompt({title: '请输入类型',value:data.name, formType: 3}, function(val, index){
+                        CoreUtil.sendAjax("/manager/questionGroup",JSON.stringify({id:data.id,name:val}),function (res) {
+                            getTableData();
+                            layer.close(index);
+                        },"PUT",'application/json; charset=UTF-8',false);
+                    });
+                    break;
+                case 'preview':
+                    preview(data);
+                    break;
+            }
+        });
+
+        var tipDialog = function (userIds,username) {
+            layer.open({
+                content: '确定要删除['+username+"]类型么?",
+                yes: function(index, layero){
+                    layer.close(index); //如果设定了yes回调，需进行手工关闭
+                    CoreUtil.sendAjax("/manager/article",JSON.stringify(userIds),function (res) {
+                        layer.msg(res.msg);
+                        getTableData();
+                    },"DELETE",'application/json; charset=UTF-8',false);
+                }
+            });
+        };
+    });
+</script>

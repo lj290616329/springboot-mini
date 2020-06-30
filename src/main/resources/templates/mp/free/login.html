@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>清华长庚皮肤病智能系统授权登录</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes" name="viewport">
+    <link rel="stylesheet" type="text/css" href="https://lib.baomitu.com/weui/2.3.0/style/weui.min.css" />
+</head>
+<body>
+<div class="page msg_success js_show">
+    <div class="weui-msg">
+        <div class="weui-msg__icon-area"><i class="weui-icon-waiting weui-icon_msg"></i></div>
+        <div class="weui-msg__text-area">
+            <p class="weui-msg__desc">授权登录系统吗?</p>
+        </div>
+        <div class="weui-msg__opr-area">
+            <p class="weui-btn-area">
+                <a href="javascript:agree(1);" class="weui-btn weui-btn_primary">确认</a>
+                <a href="javascript:agree(0);" class="weui-btn weui-btn_default">取消</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="js_dialog" id="dialog" style="display: none;">
+    <div class="weui-mask"></div>
+    <div class="weui-dialog">
+        <div class="weui-dialog__bd"><strong class="weui-dialog__title">授权提醒</strong></div>
+        <div class="weui-dialog__bd msg"></div>
+        <div class="weui-dialog__ft">
+            <a href="javascript:ok();" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://cdnjs.gtimg.com/cdnjs/libs/zepto/1.1.4/zepto.min.js"></script>
+<script type="text/javascript">
+function ok(){
+    WeixinJSBridge.invoke('closeWindow',{},function(res){
+    });
+};
+function agree(type){
+    $.ajax({
+        url:'/mobile/free_login/verify',
+        type:'post',
+        contentType: "application/json;charset=UTF-8",
+        data:JSON.stringify({token:'[[${token}]]',aggre:type}),
+        dataType:'json',
+        success:function(result){
+            $(".msg").html(result.msg);
+            $("#dialog").show();
+        }
+    })
+};
+</script>
+</html>

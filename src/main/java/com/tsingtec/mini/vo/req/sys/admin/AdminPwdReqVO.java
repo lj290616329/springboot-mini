@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class AdminPwdReqVO {
 
-    @ApiModelProperty(value = "旧密码")
+    @ApiModelProperty(value = "显示名称")
     @NotBlank(message = "显示名称不能为空")
     private String name;
 

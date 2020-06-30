@@ -20,6 +20,6 @@ public class HomeController {
 
     @GetMapping("/{str}/{str1}/{str2}")
     public String str(@PathVariable("str") String str,@PathVariable("str1") String str1,@PathVariable("str2")String str2){
-        return str+"/"+str1+"/"+str2;
+        return "manager/"+str+"/"+str1+"/"+str2;
     }
 }

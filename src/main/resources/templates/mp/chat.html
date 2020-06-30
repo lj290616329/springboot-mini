@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>我要咨询</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.mobile.css">
+</head>
+<body>
+
+<script src="/js/reconnecting-websocket.min.js"></script>
+<script src="/layuiadmin/layui/layui.js"></script>
+<script>
+layui.config({
+    base: '/layuiadmin/'//静态资源所在路径
+}).extend({
+    CoreUtil : 'core-util/CoreUtil'
+}).use(['mobile','CoreUtil'], function(){
+    var mobile = layui.mobile
+        ,layim = mobile.layim
+        ,CoreUtil = layui.CoreUtil
+        layer = mobile.layer;
+    var connect = function (data) {
+        var wsUrl = window.location.origin.replace("http","ws")+"/websocket/"+data.mine.id;
+        ws = new ReconnectingWebSocket(wsUrl, null, {debug: true, reconnectInterval: 3000});
+        ws.onmessage = function (ev) {
+            console.log(ev);
+            var chat = JSON.parse(ev.data);
+            if (chat['type'] === 'chatMessage') {
+                layim.getMessage(chat['data']);
+            }
+        };
+        ws.onopen = function (evt) {
+            console.log("建立链接");
+            init_im(data);
+        };
+        // 断开 web socket 连接成功触发事件
+        ws.onclose = function (evt) {
+            console.log("关闭!!!")
+        };
+        // 通信发生错误时触发
+        ws.onerror = function (evt) {
+            console.log('通信错误：' + evt.data);
+        };
+
+        window.onbeforeunload = function() {
+            ws.close();
+        };
+    };
+    var init_im = function(data){
+        layui.data('layim-mobile', {
+            key: data.mine.id
+            ,value: {'chatlog':data.history}
+        });
+
+        //基础配置
+        layim.config({
+            init: {
+                mine: data.mine//设置我的基础信息
+            }
+            ,uploadImage: {
+                url: '/api/upload/qiniu' //接口地址
+            }
+            ,uploadFile: {
+                url: '/api/upload/qiniu' //接口地址
+            }
+        });
+
+        var To = data.to;
+        To.type = "friend";
+        To.name = To.username;
+        //创建一个会话
+        layim.chat(To);
+
+        //发送消息
+        layim.on("sendMessage", function (res) {
+            var To = res.to;
+            var Mine = res.mine;
+            var msg = {"type":"chatMessage","data":{
+                    "username":Mine.username,
+                    "avatar":Mine.avatar,
+                    "id":To.id,
+                    "type":"friend",
+                    "content":Mine.content,
+                    "fromid":Mine.id,
+                    "toid":To.id
+                }};
+            ws.send(JSON.stringify(msg));
+        });
+    };
+    CoreUtil.sendAjax('/mobile/chat/init/2',{},function (res) {
+        if(res.code==0){
+            connect(res.data);
+        }
+    },"GET",'application/json; charset=UTF-8',false);
+
+});
+</script>
+</body>
+</html>

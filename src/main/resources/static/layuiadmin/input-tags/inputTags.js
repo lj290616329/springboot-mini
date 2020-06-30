@@ -89,8 +89,8 @@ layui.define(['jquery','layer'],function(exports){
     var that = this
     ,spans = ''
     ,options = that.config;
-    options.elem.focus();
-    options.elem.keypress(function(event){  
+    //options.elem.focus();
+    options.elem.keypress(function(event){
       var keynum = (event.keyCode ? event.keyCode : event.which);  
       if(keynum == '13'){  
         var $val = options.elem.val().trim();
@@ -112,12 +112,29 @@ layui.define(['jquery','layer'],function(exports){
   //事件处理
   Class.prototype.events = function(){
      var that = this
-    ,options = that.config;
-    $('.albtn').on('click',function(){
-      console.log(options.content)
-    })
-    $('#tags').on('click','.close',function(){
+    ,options = that.config
+    ,spans = '';
+    //失去焦点时的事件
+    options.elem.blur(function () {
+      var $val = options.elem.val().trim();
+      if(!$val) return false;
+      if(options.content.indexOf($val) == -1){
+        options.content.push($val);
+        that.render()
+        spans ='<span><em>'+$val+'</em><button type="button" class="close">×</button></span>';
+        options.elem.before(spans)
+      }
+      options.done && typeof options.done === 'function' && options.done($val);
+      options.valinput.val(options.content.join(','))
+      options.elem.val('');
+      return false;
+    });
 
+     $('.albtn').on('click',function(){
+      console.log(options.content)
+    });
+
+    $('.tags').on('click','.close',function(){
       var Thisremov = $(this).parent('span').remove(),
       ThisText = $(Thisremov).find('em').text();
       console.log(ThisText)

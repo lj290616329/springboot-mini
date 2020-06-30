@@ -8,6 +8,8 @@ import com.tsingtec.mini.service.MpUserService;
 import com.tsingtec.mini.utils.BeanUtil;
 import com.tsingtec.mini.vo.req.mini.WxUserPageReqVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +19,6 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -35,6 +36,15 @@ public class MpUserServiceImpl implements MpUserService {
     }
 
     @Override
+    public MpUser findByMiniOpenid(String openId) {
+        if(StringUtils.isEmpty(openId)){
+            throw new BusinessException(BaseExceptionType.USER_ERROR,"非法openid");
+        }
+        return mpUserRepository.findByMiniOpenid(openId);
+    }
+
+    @Override
+    @Cacheable(value="data",key = "'mpUser'+#p0")
     public MpUser findByUnionId(String unionId) {
         return mpUserRepository.findByUnionId(unionId);
     }
@@ -77,14 +87,11 @@ public class MpUserServiceImpl implements MpUserService {
     }
 
     @Override
+    @CachePut(value="data",key = "'mpUser'+#mpUser.unionId")
     public MpUser save(MpUser mpUser) {
-        MpUser saveUser = findByOpenId(mpUser.getOpenId());
+        MpUser saveUser = findByUnionId(mpUser.getUnionId());
         saveUser = (saveUser != null) ? saveUser : new MpUser();
         BeanUtil.copyPropertiesIgnoreNull(mpUser,saveUser);
-        if(saveUser.getCreateTime() == null){
-            saveUser.setCreateTime(new Date());
-        }
-        saveUser.setUpdateTime(new Date());
         return mpUserRepository.save(saveUser);
     }
 }

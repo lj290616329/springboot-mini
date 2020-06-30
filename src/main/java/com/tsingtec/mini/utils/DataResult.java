@@ -16,7 +16,7 @@ public class DataResult<T>{
     /**
      * 请求响应code，200为成功 其他为失败
      */
-    @ApiModelProperty(value = "请求响应code，200为成功 其他为失败", name = "code")
+    @ApiModelProperty(value = "请求响应code，0为成功 其他为失败", name = "code")
     private int code;
 
     /**
@@ -77,6 +77,11 @@ public class DataResult<T>{
     public static <T>DataResult success(){
         return new <T>DataResult();
     }
+
+    public static <T>DataResult fail(String msg){
+        return new <T>DataResult(-1,msg);
+    }
+
     public static <T>DataResult success(T data){
         return new <T>DataResult(data);
     }

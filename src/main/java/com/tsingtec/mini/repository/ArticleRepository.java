@@ -25,6 +25,8 @@ public interface ArticleRepository extends JpaRepository<Article, Integer>, JpaS
     @Query("select max(id) from Article")
     Integer maxId();
 
+    @Modifying
+    @Transactional
     @Query(value="update news_article set hits=hits+1 where id= :id",nativeQuery = true)
     void hits(Integer id);
 }

@@ -7,6 +7,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * @Author lj
@@ -25,4 +26,11 @@ public class Friend extends BaseEntity {
     private String avatar;//头像
     private String sign;//签名
     private String type;//mobileOR pc
+
+    @Transient
+    private Integer unRead=0;
+
+    @Transient
+    private Chatlog chatlog;
+
 }

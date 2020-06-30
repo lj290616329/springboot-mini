@@ -87,9 +87,6 @@
             <version>${json.version}</version>
         </dependency>
 
-
-
-
         <!-- cache -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -202,6 +199,18 @@
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer</artifactId>
             <version>${dozer.version}</version>
+        </dependency>
+
+        <!--二维码生成  -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.3.0</version>
         </dependency>
 
     </dependencies>

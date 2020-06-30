@@ -19,11 +19,17 @@ public class ArticlePageReqVO {
     private String title;
 
     @ApiModelProperty(value = "标签")
-    private String tags;
+    private  Integer tag;
 
     @ApiModelProperty(value = "开始时间")
     private Date startTime;
 
     @ApiModelProperty(value = "结束时间")
     private Date endTime;
+
+    @ApiModelProperty(value = "第几页")
+    private int pageNum=1;
+
+    @ApiModelProperty(value = "分页数量")
+    private int pageSize=10;
 }

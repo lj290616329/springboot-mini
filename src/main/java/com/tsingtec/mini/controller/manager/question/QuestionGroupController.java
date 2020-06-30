@@ -5,7 +5,7 @@ import com.tsingtec.mini.entity.mini.QuestionGroup;
 import com.tsingtec.mini.service.QuestionGroupService;
 import com.tsingtec.mini.utils.DataResult;
 import com.tsingtec.mini.vo.req.question.QuestionGroupReqVO;
-import com.tsingtec.mini.vo.req.sort.SortReqVO;
+import com.tsingtec.mini.vo.req.other.SortReqVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

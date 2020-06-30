@@ -11,10 +11,11 @@ import com.tsingtec.mini.service.QuestionGroupService;
 import com.tsingtec.mini.service.QuestionService;
 import com.tsingtec.mini.utils.BeanMapper;
 import com.tsingtec.mini.utils.BeanUtil;
+import com.tsingtec.mini.vo.req.other.SortReqVO;
+import com.tsingtec.mini.vo.req.other.SwitchReqVO;
 import com.tsingtec.mini.vo.req.question.QuestionAddReqVO;
-import com.tsingtec.mini.vo.req.question.QuestionListRespVO;
+import com.tsingtec.mini.vo.resp.app.question.QuestionListRespVO;
 import com.tsingtec.mini.vo.req.question.QuestionUpdateReqVO;
-import com.tsingtec.mini.vo.req.sort.SortReqVO;
 import org.apache.shiro.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -108,8 +109,19 @@ public class QuestionServiceImpl implements QuestionService {
         List<QuestionGroup> questionGroups = questionGroupService.getAll();
         List<QuestionListRespVO> questionListRespVOS = Lists.newArrayList();
         questionGroups.forEach(questionGroup -> {
-            questionListRespVOS.add(new QuestionListRespVO(questionGroup.getName(),questionRepository.findByGroupNameOrderBySortAsc(questionGroup.getName())));
+            questionListRespVOS.add(new QuestionListRespVO(questionGroup.getName(),questionRepository.findByGroupNameAndBasicOrderBySortAsc(questionGroup.getName(),true)));
         });
         return questionListRespVOS;
+    }
+
+    @Override
+    public void basic(SwitchReqVO vo) {
+        Question question = questionRepository.getOne(vo.getId());
+        if(null == question){
+            throw new BusinessException(BaseExceptionType.USER_ERROR,"不存在的记录");
+        }
+        question.setBasic(vo.getOpen());
+        questionRepository.save(question);
+
     }
 }

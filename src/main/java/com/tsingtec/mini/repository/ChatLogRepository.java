@@ -10,6 +10,9 @@ import java.util.List;
 @Repository
 public interface ChatLogRepository extends JpaRepository<Chatlog, Integer>, JpaSpecificationExecutor<Chatlog> {
 
+    Chatlog getDistinctFirstByChatidAndStatusOrderByIdDesc(Integer toid,Boolean status);
+
+    Integer countByChatidAndFromidAndStatus(Integer chatid,Integer fromid,Boolean status);
 
     List<Chatlog> findByToidInAndStatus(List<Integer> toids, Boolean status);
 

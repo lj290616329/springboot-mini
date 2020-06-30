@@ -4,9 +4,10 @@ import com.tsingtec.mini.aop.annotation.LogAnnotation;
 import com.tsingtec.mini.entity.mini.Question;
 import com.tsingtec.mini.service.QuestionService;
 import com.tsingtec.mini.utils.DataResult;
+import com.tsingtec.mini.vo.req.other.SortReqVO;
+import com.tsingtec.mini.vo.req.other.SwitchReqVO;
 import com.tsingtec.mini.vo.req.question.QuestionAddReqVO;
 import com.tsingtec.mini.vo.req.question.QuestionUpdateReqVO;
-import com.tsingtec.mini.vo.req.sort.SortReqVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -69,6 +70,14 @@ public class QuestionController {
     @LogAnnotation(title = "问题管理",action = "修改问题")
     public DataResult sort(@RequestBody List<SortReqVO> vo){
         questionService.sort(vo);
+        return DataResult.success();
+    }
+
+    @PutMapping("/question/basic")
+    @ApiOperation(value = "问题开关接口")
+    @LogAnnotation(title = "问题管理",action = "问题开关接口")
+    public DataResult basic(@RequestBody SwitchReqVO vo){
+        questionService.basic(vo);
         return DataResult.success();
     }
 

@@ -10,7 +10,7 @@ import com.tsingtec.mini.repository.QuestionGroupRepository;
 import com.tsingtec.mini.repository.QuestionRepository;
 import com.tsingtec.mini.service.QuestionGroupService;
 import com.tsingtec.mini.vo.req.question.QuestionGroupReqVO;
-import com.tsingtec.mini.vo.req.sort.SortReqVO;
+import com.tsingtec.mini.vo.req.other.SortReqVO;
 import org.apache.shiro.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

@@ -8,11 +8,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tsingtec.mini.config.jwt.JwtUtil;
 import com.tsingtec.mini.config.mini.WxMaConfiguration;
 import com.tsingtec.mini.entity.mp.MpUser;
+import com.tsingtec.mini.service.DoctorService;
+import com.tsingtec.mini.service.InformationService;
 import com.tsingtec.mini.service.MpUserService;
 import com.tsingtec.mini.utils.BeanUtil;
 import com.tsingtec.mini.utils.DataResult;
 import com.tsingtec.mini.vo.req.mini.WxLoginReqVO;
+import com.tsingtec.mini.vo.resp.app.doctor.DoctorRespVO;
 import com.tsingtec.mini.vo.resp.app.mini.MiniUserInfoRespVO;
+import com.tsingtec.mini.vo.resp.base.BaseUserRespVO;
 import com.vip.vjtools.vjkit.mapper.JsonMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +41,13 @@ public class WxMiniAuthController {
     private MpUserService mpUserService;
 
     @Autowired
+    private InformationService informationService;
+
+    @Autowired
+    private DoctorService doctorService;
+
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     private final JsonMapper mapper = JsonMapper.nonEmptyMapper();
@@ -48,9 +59,10 @@ public class WxMiniAuthController {
      */
     @PostMapping("/auth")
     @ApiOperation(value = "用户授权接口")
-    public DataResult<String> sign(@RequestBody WxLoginReqVO wxLoginVo) throws JsonProcessingException {
+    public DataResult<BaseUserRespVO> sign(@RequestBody WxLoginReqVO wxLoginVo) throws JsonProcessingException {
         final WxMaService wxService = WxMaConfiguration.getMaService();
-        DataResult result = DataResult.success();
+        DataResult<BaseUserRespVO> result = DataResult.success();
+
         log.info("登录信息为:{}",wxLoginVo);
         String code = wxLoginVo.getCode();
         if(StringUtils.isBlank(code)){
@@ -82,9 +94,13 @@ public class WxMiniAuthController {
             mpUser = mpUserService.save(mpUser);
 
             String token = jwtUtil.getToken(mpUser);
-
-            result.setData(token);
-
+            Boolean ifAuth = informationService.ifAuth(mpUser.getId());
+            Integer type = 1;
+            DoctorRespVO doctor = doctorService.findByUid(mpUser.getId());
+            if(null != doctor){
+                type = 2;
+            }
+            result.setData(new BaseUserRespVO(type,ifAuth,token));
         }catch (WxErrorException e) {
             result.setCode(-1);
             result.setMsg("授权失败,请稍后再试!");
@@ -100,8 +116,8 @@ public class WxMiniAuthController {
      */
     @GetMapping("/login")
     @ApiOperation(value = "用户登录接口")
-    public DataResult<String> login(String code) {
-        DataResult<String> result = DataResult.success();
+    public DataResult<BaseUserRespVO> login(String code) {
+        DataResult<BaseUserRespVO> result = DataResult.success();
         if (StringUtils.isBlank(code)) {
             result.setCode(-1);
             result.setMsg("授权信息不全,请重新进行授权");
@@ -116,7 +132,14 @@ public class WxMiniAuthController {
                 result.setCode(0);
                 result.setMsg("登录成功");
                 String token = jwtUtil.getToken(mpUser);
-                result.setData(token);
+
+                Boolean ifAuth = informationService.ifAuth(mpUser.getId());
+                Integer type = 1;
+                DoctorRespVO doctor = doctorService.findByUid(mpUser.getId());
+                if(null != doctor){
+                    type = 2;
+                }
+                result.setData(new BaseUserRespVO(type,ifAuth,token));
             }else{
                 result.setCode(-1);
                 result.setMsg("登录成功");

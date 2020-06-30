@@ -14,5 +14,4 @@ public class FriendRespVO {
     private String groupname="我的病人";
     private Integer id=1;
     private List<MineRespVO> list;//好友列表
-
 }

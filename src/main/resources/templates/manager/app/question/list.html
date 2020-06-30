@@ -36,6 +36,14 @@
     <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
     <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
 </script>
+<script type="text/html" id="basicTemp">
+    {{#  if(d.basic){ }}
+    <input type="checkbox" name="basic" lay-skin="switch" checked   lay-text="基本问题|常规问题"  value= {{ d.id}}  lay-filter="basic" >
+    {{#  } else { }}
+    <input type="checkbox" name="basic" lay-skin="switch"  lay-text="基本问题|常规问题"  value= {{ d.id}} lay-filter="basic" >
+    {{#  } }}
+</script>
+
 <script src="/layuiadmin/layui/layui.js"></script>
 </html>
 <script>
@@ -49,10 +57,11 @@
         tableMerge: 'modules/tableMerge',
         tableFilter: 'modules/tableFilter',
         excel: 'modules/excel',
-    }).use(['table','soulTable','CoreUtil'], function(){
+    }).use(['table','soulTable','CoreUtil','form'], function(){
         var table = layui.table,soulTable = layui.soulTable;
         var layer = layui.layer;
         var $ = jQuery = layui.jquery;
+        var form = layui.form;
         var CoreUtil = layui.CoreUtil;
         //排序
         var sort = function(sorts){
@@ -71,6 +80,7 @@
                     {field: 'groupName', title: '分组名称', sort: true, filter: true},
                     {field: 'createTime', title: '录入时间',sort: true,filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
                     {field: 'updateTime', title: '更新时间',filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
+                    {filed: 'status',title:'类型',templet:'#basicTemp'},
                     {width:300,toolbar:"#tool",title:'操作'}
                 ]
             ]
@@ -159,6 +169,15 @@
                     break;
             };
         });
+        form.on('switch(basic)', function(data){
+            console.log(data);
+            var id = data.value;
+            var open = this.checked ? 1 : 0;
+            console.log(JSON.stringify({id:id,open:open}))
+            CoreUtil.sendAjax("/manager/question/basic",JSON.stringify({id:id,open:open}),function (res) {
+                getTableData();
+            },"PUT",'application/json; charset=UTF-8',false);
+        })
 
         var edit = function (obj) {
             var ifr = layer.open({

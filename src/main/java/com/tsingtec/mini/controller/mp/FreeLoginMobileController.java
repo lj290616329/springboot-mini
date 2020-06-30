@@ -1,7 +1,6 @@
 package com.tsingtec.mini.controller.mp;
 
 import com.tsingtec.mini.config.jwt.JwtUtil;
-import com.tsingtec.mini.entity.mini.Doctor;
 import com.tsingtec.mini.entity.mp.MpUser;
 import com.tsingtec.mini.entity.sys.Admin;
 import com.tsingtec.mini.exception.code.BaseExceptionType;
@@ -10,6 +9,7 @@ import com.tsingtec.mini.service.DoctorService;
 import com.tsingtec.mini.utils.DataResult;
 import com.tsingtec.mini.utils.HttpContextUtils;
 import com.tsingtec.mini.vo.req.free.FreeLoginReqVO;
+import com.tsingtec.mini.vo.resp.app.doctor.DoctorRespVO;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +41,12 @@ public class FreeLoginMobileController {
 
     @GetMapping("free_login/{token:.+}")
     public String freeLogin(@PathVariable("token") String token, Model model){
-        System.out.println(token);
         if(!jwtUtil.verify(token)){
             model.addAttribute("msg","二维码过期,请重新生成后,再进行...");
             return "mp/error/403";
         }
         MpUser mpUser = (MpUser) HttpContextUtils.getHttpServletRequest().getSession().getAttribute("mp_user");
-        Doctor doctor = doctorService.findByMpUser(mpUser);
+        DoctorRespVO doctor = doctorService.findByUid(mpUser.getId());
         if(null == doctor){
             model.addAttribute("msg","您没有权限进行此操作!");
             return "mp/error/403";
@@ -63,7 +62,7 @@ public class FreeLoginMobileController {
             return DataResult.getResult(BaseExceptionType.TOKEN_ERROR,"二维码过期,请重新生成后,再进行");
         }
         MpUser mpUser = (MpUser) HttpContextUtils.getHttpServletRequest().getSession().getAttribute("mp_user");
-        Doctor doctor = doctorService.findByMpUser(mpUser);
+        DoctorRespVO doctor = doctorService.findByUid(mpUser.getId());
         if(null == doctor){
             return DataResult.getResult(BaseExceptionType.TOKEN_ERROR,"您没有权限进行此操作!");
         };

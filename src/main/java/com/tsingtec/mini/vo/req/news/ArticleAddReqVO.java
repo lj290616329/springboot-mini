@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @Author lj
@@ -35,6 +36,6 @@ public class ArticleAddReqVO {
     private String content;//内容
 
     @ApiModelProperty(value = "显示名称",name="name")
-    @NotBlank(message = "显示名称不能为空")
-    private String tags; //标签类型
+    @NotNull(message = "显示名称不能为空")
+    private Integer tag; //标签类型
 }

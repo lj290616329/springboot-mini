@@ -2,8 +2,10 @@ package com.tsingtec.mini.service.impl;
 
 import com.google.common.collect.Lists;
 import com.tsingtec.mini.entity.mp.MpUser;
+import com.tsingtec.mini.entity.websocket.ChatId;
 import com.tsingtec.mini.entity.websocket.Friend;
 import com.tsingtec.mini.repository.ChatIdRepository;
+import com.tsingtec.mini.repository.ChatLogRepository;
 import com.tsingtec.mini.repository.FriendRepository;
 import com.tsingtec.mini.service.FriendService;
 import com.tsingtec.mini.utils.BeanMapper;
@@ -32,6 +34,16 @@ public class FriendServiceImpl implements FriendService {
     @Autowired
     private ChatIdRepository chatIdRepository;
 
+    @Autowired
+    private ChatLogRepository chatLogRepository;
+
+    private String ids(Integer toid, Integer fromid) {
+        if(toid>fromid){
+            return "#"+fromid+"#"+toid + "#";
+        }
+        return "#"+toid+"#"+fromid + "#";
+    }
+
     @Override
     public Friend checkByUidAndType(Integer uid, String type) {
         return friendRepository.findByUidAndType(uid,type);
@@ -53,9 +65,17 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public List<FriendRespVO> getByUid(Integer uid) {
-
         List<Integer> fids = chatIdRepository.getFidsByUid("#"+uid+"#","%#"+uid+"#%");
         List<Friend> friends = friendRepository.findAllById(fids);
+        //获取未读数量
+        friends.forEach(friend -> {
+
+            ChatId chatId = chatIdRepository.findByIds(ids(friend.getId(),uid));
+
+            friend.setUnRead(chatLogRepository.countByChatidAndFromidAndStatus(chatId.getId(),friend.getId(),false));
+            //获取最后收到的信息
+            friend.setChatlog(chatLogRepository.getDistinctFirstByChatidAndStatusOrderByIdDesc(chatId.getId(),true));
+        });
         /**
          * 只设置一个分组
          */
@@ -78,5 +98,4 @@ public class FriendServiceImpl implements FriendService {
         Friend friend = friendRepository.getOne(id);
         return mapper.fromJson(mapper.toJson(friend),ToRespVO.class);
     }
-
 }

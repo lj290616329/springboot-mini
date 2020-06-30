@@ -1,5 +1,6 @@
 package com.tsingtec.mini.entity.mini;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tsingtec.mini.entity.BaseEntity;
 import com.tsingtec.mini.entity.mp.MpUser;
 import lombok.Data;
@@ -18,6 +19,7 @@ import javax.persistence.*;
 @DynamicInsert(true)
 @DynamicUpdate(true)
 @Table(name = "mini_doctor")
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class Doctor extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="uid",columnDefinition ="用户id")//指定外键名称

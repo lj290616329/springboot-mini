@@ -58,7 +58,7 @@ public class ChatlogServiceImpl implements ChatlogService {
 
     @Override
     public Map<String,List<ChatlogRespVO>> findByChatids(Integer uid,List<Integer> chatids) {
-        List<Chatlog> chatlogs = chatLogRepository.findByChatidInAndStatus(chatids,true);
+        List<Chatlog> chatlogs = chatLogRepository.findByChatidIn(chatids);
         chatlogs.parallelStream().forEach((t)->
                 t.setMine(t.getFromid().equals(uid))
         );

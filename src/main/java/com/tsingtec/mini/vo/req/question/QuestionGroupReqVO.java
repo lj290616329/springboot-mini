@@ -18,7 +18,7 @@ public class QuestionGroupReqVO {
     @NotNull(message = "id")
     private Integer id;
 
-    @ApiModelProperty(value = "父级名称",name="pName")
+    @ApiModelProperty(value = "父级名称",name="name")
     @NotBlank(message = "父级名称不能为空")
     private String name;
 }

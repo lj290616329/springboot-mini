@@ -128,6 +128,19 @@ public class JwtUtil {
             return false;
         }
     }
+    //小程序图片什么的其他的验证
+    public String getClaim2(String token, String claim) {
+        Algorithm algorithm = Algorithm.HMAC256(jwtProperties.secretKey);
+        try{
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            DecodedJWT jwt = verifier.verify(token);
+            return jwt.getClaims().get(claim).asString();
+        }catch (IllegalArgumentException e) {
+            throw new BusinessException(BaseExceptionType.MINI_ERROR);
+        }catch (JWTVerificationException e) {
+            throw new BusinessException(BaseExceptionType.MINI_ERROR);
+        }
+    }
 
     public String getClaim(String token, String claim) {
         Algorithm algorithm = Algorithm.HMAC256(jwtProperties.secretKey);

@@ -1,4 +1,4 @@
-package com.tsingtec.mini.vo.req.sort;
+package com.tsingtec.mini.vo.req.other;
 
 import lombok.Data;
 

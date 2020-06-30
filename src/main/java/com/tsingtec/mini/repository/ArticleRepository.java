@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
-
+@Repository
 public interface ArticleRepository extends JpaRepository<Article, Integer>, JpaSpecificationExecutor<Article> {
 
     @Modifying
@@ -23,4 +24,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer>, JpaS
 
     @Query("select max(id) from Article")
     Integer maxId();
+
+    @Query(value="update news_article set hits=hits+1 where id= :id",nativeQuery = true)
+    void hits(Integer id);
 }

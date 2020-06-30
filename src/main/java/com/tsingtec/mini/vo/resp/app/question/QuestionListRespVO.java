@@ -1,4 +1,4 @@
-package com.tsingtec.mini.vo.req.question;
+package com.tsingtec.mini.vo.resp.app.question;
 
 import com.tsingtec.mini.entity.mini.Question;
 import lombok.Data;

@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
-
+@Repository
 public interface QuestionRepository extends JpaRepository<Question, Integer>, JpaSpecificationExecutor<Question> {
 
     @Query("select max(id) from Question")
@@ -29,7 +30,5 @@ public interface QuestionRepository extends JpaRepository<Question, Integer>, Jp
 
     List<Question> findByGroupSort(Integer oldSorts);
 
-    List<Question> findByGroupNameOrderBySortAsc(String groupName);
-
-
+    List<Question> findByGroupNameAndBasicOrderBySortAsc(String name, boolean b);
 }

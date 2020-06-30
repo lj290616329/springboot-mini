@@ -3,7 +3,7 @@ package com.tsingtec.mini;
 import com.tsingtec.mini.config.qiniu.ConstantQiniu;
 import com.tsingtec.mini.service.*;
 import com.tsingtec.mini.service.impl.ArticleServiceImpl;
-import com.tsingtec.mini.vo.req.question.QuestionListRespVO;
+import com.tsingtec.mini.vo.resp.websocket.FriendRespVO;
 import com.vip.vjtools.vjkit.mapper.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,13 @@ class MiniApplicationTests {
     @Test
     void contextLoads() {
 
-        List<QuestionListRespVO> questionListRespVOS = questionService.getQuestionList();
-        System.out.println(questionListRespVOS.toString());
+        List<FriendRespVO> friends = friendService.getByUid(1);
+        System.out.println(friends.toString());
+
+        /*EvaluationDetailRespVO respVO = evaluationService.detail(1);
+        System.out.println(respVO.toString());*/
+        /*List<QuestionListRespVO> questionListRespVOS = questionService.getQuestionList();
+        System.out.println(questionListRespVOS.toString());*/
         /*ArticlePageReqVO articlePageReqVO = new ArticlePageReqVO();
         articlePageReqVO.setPageSize(5);
         Page<Article> articles = articleService.pageInfo(articlePageReqVO);

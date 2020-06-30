@@ -9,7 +9,14 @@ import lombok.Data;
  */
 @Data
 public class BaseUserRespVO {
-    private String name;//姓名
-    private String headImgUrl;//头像
+    private Integer type=1;//1用户2医生
+    private Boolean ifAuth;//是否填写个人信息
     private String token;//token
+
+
+    public BaseUserRespVO(Integer type,Boolean ifAuth,String token){
+        this.type = type;
+        this.ifAuth = ifAuth;
+        this.token = token;
+    }
 }

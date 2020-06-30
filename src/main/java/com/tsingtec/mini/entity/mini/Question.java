@@ -35,6 +35,7 @@ public class Question extends BaseEntity {
     private Boolean required=false;//是否必填
     private String options;//选项 逗号分隔
     private Boolean ifNeed=false;//是否关联
+    private Boolean basic=true;//基本测试信息
     private String need;//关联的内容
     private Integer sort;//排序
 

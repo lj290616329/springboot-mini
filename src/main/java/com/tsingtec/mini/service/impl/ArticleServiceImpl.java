@@ -10,12 +10,16 @@ import com.tsingtec.mini.utils.BeanMapper;
 import com.tsingtec.mini.utils.BeanUtil;
 import com.tsingtec.mini.vo.req.news.ArticleAddReqVO;
 import com.tsingtec.mini.vo.req.news.ArticlePageReqVO;
-import com.tsingtec.mini.vo.req.sort.SortReqVO;
 import com.tsingtec.mini.vo.req.news.ArticleUpdateReqVO;
+import com.tsingtec.mini.vo.req.other.SortReqVO;
 import com.tsingtec.mini.vo.resp.news.ArticleRespVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -57,8 +61,8 @@ public class ArticleServiceImpl implements ArticleService {
                 predicates.add(criteriaBuilder.like(root.get("title"),"%"+vo.getTitle()+"%"));
             }
 
-            if (!StringUtils.isBlank(vo.getTags())){
-                predicates.add(criteriaBuilder.like(root.get("tags"),"%"+vo.getTags()+"%"));
+            if (null != vo.getTag()){
+                predicates.add(criteriaBuilder.greaterThan(root.get("tag"),vo.getTag()));
             }
 
             if (null != vo.getStartTime()){
@@ -117,5 +121,38 @@ public class ArticleServiceImpl implements ArticleService {
         sorts.forEach(sort -> {
             articleRepository.sort(sort.getId(),sort.getToSort());
         });
+    }
+
+    @Override
+    public Page<Article> getPage(ArticlePageReqVO vo) {
+        Pageable pageable = PageRequest.of(vo.getPageNum()-1, vo.getPageSize(), Sort.Direction.DESC,"id");
+        return articleRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+
+            if (null != vo.getAid()){
+                predicates.add(criteriaBuilder.equal(root.get("aid"),vo.getAid()));
+            }
+
+            if (!StringUtils.isBlank(vo.getTitle())){
+                predicates.add(criteriaBuilder.like(root.get("title"),"%"+vo.getTitle()+"%"));
+            }
+
+            if (null != vo.getTag()){
+                predicates.add(criteriaBuilder.equal(root.get("tag"),vo.getTag()));
+            }
+            if (null !=vo.getStartTime()){
+                predicates.add(criteriaBuilder.lessThan(root.get("createTime"),vo.getStartTime()));
+            }
+            if (null !=vo.getEndTime()){
+                predicates.add(criteriaBuilder.lessThan(root.get("createTime"),vo.getEndTime()));
+            }
+            return criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()])).getRestriction();
+        },pageable);
+    }
+
+    @Override
+    @Cacheable(value = "data",key = "#p0+'#'+#p1")
+    public void hits(String ip, Integer id) {
+        articleRepository.hits(id);
     }
 }

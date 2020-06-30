@@ -7,7 +7,7 @@ import com.tsingtec.mini.utils.DataResult;
 import com.tsingtec.mini.utils.HttpContextUtils;
 import com.tsingtec.mini.vo.req.news.ArticleAddReqVO;
 import com.tsingtec.mini.vo.req.news.ArticlePageReqVO;
-import com.tsingtec.mini.vo.req.sort.SortReqVO;
+import com.tsingtec.mini.vo.req.other.SortReqVO;
 import com.tsingtec.mini.vo.req.news.ArticleUpdateReqVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

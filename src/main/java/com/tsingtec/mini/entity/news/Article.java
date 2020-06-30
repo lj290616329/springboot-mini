@@ -34,7 +34,11 @@ public class Article extends BaseEntity {
 
     private String content;//内容
 
-    private String tags; //标签类型
+    private Integer tag; //标签类型
 
-    private Integer sort;
+    private Integer sort;//排序
+
+    private Integer hits=0;//点击量
+
+    private Boolean isTop=false;//是否置顶 每个分类只有一个是置顶的
 }

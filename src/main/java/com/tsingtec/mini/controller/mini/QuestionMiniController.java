@@ -1,9 +1,9 @@
 package com.tsingtec.mini.controller.mini;
 
-import com.tsingtec.mini.config.jwt.JwtUtil;
+import com.tsingtec.mini.aop.annotation.PassToken;
 import com.tsingtec.mini.service.QuestionService;
 import com.tsingtec.mini.utils.DataResult;
-import com.tsingtec.mini.vo.req.question.QuestionListRespVO;
+import com.tsingtec.mini.vo.resp.app.question.QuestionListRespVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +28,7 @@ public class QuestionMiniController {
     @Autowired
     private QuestionService questionService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
+    @PassToken
     @GetMapping("/list")
     @ApiOperation(value = "获取调查问卷列表")
     public DataResult<List<QuestionListRespVO>> list() {

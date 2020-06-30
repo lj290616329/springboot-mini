@@ -1,5 +1,6 @@
 package com.tsingtec.mini;
 
+import com.tsingtec.mini.config.jwt.JwtUtil;
 import com.tsingtec.mini.config.qiniu.ConstantQiniu;
 import com.tsingtec.mini.config.jwt.JwtUtil;
 import com.tsingtec.mini.entity.mini.MaUser;
@@ -20,6 +21,30 @@ class MiniApplicationTests {
     private RoleService roleService;
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private MpUserService mpUserService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private ConstantQiniu constantQiniu;
+
+    @Autowired
+    private QuestionService questionService;
+
+    @Resource
+    private ArticleService articleService;
+    @Resource
+    private ArticleServiceImpl ArticleServiceImpl;
+    private final JsonMapper mapper = JsonMapper.nonEmptyMapper();
+
+    @Autowired
+    private EvaluationService evaluationService;
+
+    @Autowired
+    private FriendService friendService;
     @Test
     void contextLoads() {
 
@@ -38,10 +63,16 @@ class MiniApplicationTests {
         System.out.println(logs.getNumber());*/
 
 
-        Role role = roleService.findById(1);
-        for(Menu menu:role.getMenus()){
-            System.out.println(menu.getName());
-        }
+        /*MpUser mpUser = new MpUser();
+        mpUser.setOpenId("oypRptyfY2IgIVlfSThRAMvxnLGg");
+        mpUserService.save(mpUser);*/
+
+       /* MaUser maUser = maUserService.get(1);
+        String token = jwtUtil.getToken(maUser);
+        System.out.println(token);
+        System.out.println(jwtUtil.verify(token));
+        //System.out.println(jwtUtil.getClaim(token,"openid"));;
+        System.out.println(jwtUtil.getClaim(token,"id"));;*/
 
     }
 

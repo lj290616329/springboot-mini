@@ -24,6 +24,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -44,7 +45,14 @@ public class IndexController {
     private JwtUtil jwtUtil;
 
     @GetMapping("/login")
-    public String login(HttpServletRequest request, Model model){
+    public String login(HttpServletRequest request,HttpServletResponse response, Model model){
+
+        Cookie cookie=new Cookie("JSESSIONID",request.getSession().getId());
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+
         Subject subject = SecurityUtils.getSubject();
         if(subject.isAuthenticated()){
             return "redirect:/home/index";

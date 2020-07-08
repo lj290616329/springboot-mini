@@ -3,13 +3,47 @@
 <head>
     <title>我要咨询</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.mobile.css">
+    <meta name="divport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.mobile.css">
 </head>
 <body>
+<div class="main">
+    {{each lists as item}}
+        <div class="item-box">
+            <div class="item" bindtap="chat" data-id="{{item.id}}" data-index="{{index}}">
+                <div class="item-head">
+                    <img src="{{item.avatar}}"></img>
+                </div>
+                <div class="item-content">
+                    <div class="item-username">{{item.username}}
+                        {{if item.chatlog}}
+                            <div class="item-time">{{item.chatlog.timestamp |timeago}}</div>
+                        {{/if}}
+                    </div>
+                    {{if item.chatlog}}
+                        <div class="item-desc">{{item.chatlog.content}}</div>
+                    {{/if}}
+                </div>
+                {{if item.unRead>0}}
+                    <div class="item-badge">{{item.unRead}}</div>
+                {{/if}}
+            </div>
+        </div>
+    {{/each}}
+    {{if lists.length==0}}
+    <div class="prompt-box">
+        <div class="prompt-icon">
+            <img src="/images/no-data.png"></img>
+        </div>
+        <div class="prompt-msg">您暂无可直接联系的对象</div>
+        <div bindtap="back" class="prompt-btn">返回</div>
+    </div>
+    {{/if}}
+</div>
 
-<script src="/js/reconnecting-websocket.min.js"></script>
-<script src="/layuiadmin/layui/layui.js"></script>
+
+<script src="/static/js/reconnecting-websocket.min.js"></script>
+<script src="/static/layuiadmin/layui/layui.js"></script>
 <script>
 layui.config({
     base: '/layuiadmin/'//静态资源所在路径
@@ -59,10 +93,10 @@ layui.config({
                 mine: data.mine//设置我的基础信息
             }
             ,uploadImage: {
-                url: '/api/upload/qiniu' //接口地址
+                url: '/api/upload/file/qiniu' //接口地址
             }
             ,uploadFile: {
-                url: '/api/upload/qiniu' //接口地址
+                url: '/api/upload/file/qiniu' //接口地址
             }
         });
 
@@ -88,7 +122,7 @@ layui.config({
             ws.send(JSON.stringify(msg));
         });
     };
-    CoreUtil.sendAjax('/mobile/chat/init/2',{},function (res) {
+    CoreUtil.sendAjax('/mobile/chat/friends/mobile',{},function (res) {
         if(res.code==0){
             connect(res.data);
         }

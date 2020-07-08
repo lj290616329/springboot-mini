@@ -45,10 +45,14 @@
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">文章标签</label>
-        <div class="layui-input-block tags">
-            <input type="hidden" id="tags" name="tags" value="{{tags}}" lay-verify="required" placeholder="请输入文章标签" lay-reqtext="请输入文章标签" autocomplete="off" class="layui-input">
-            <input type="text" id="inputTags" placeholder="请输入文章标签" autocomplete="off" class="layui-input">
+        <label class="layui-form-label">文章类型</label>
+        <div class="layui-input-block">
+            <select name="tag" lay-filter="required" lay-reqtext="请选择文章类型">
+                <option value="">请选择类型</option>
+                {{each tags as articleTag}}
+                    <option value="{{articleTag.id}}" {{if articleTag.id==tag}} selected='' {{else if !articleTag.status}} disabled=''{{/if}}>{{articleTag.name}}</option>
+                {{/each}}
+            </select>
         </div>
     </div>
 
@@ -110,9 +114,20 @@ function child(obj){
             ,inputTags = layui.inputTags
             ,CoreUtil = layui.CoreUtil;
         var article = JSON.parse(JSON.stringify(obj));
-        var html = template("article",article);
-        $(".layui-form").html(html);
-        form.render();
+        CoreUtil.sendAjax('/manager/articleTag',{},function(res){
+            article.tags = res.data;
+
+
+            console.log(article);
+            var html = template("article",article);
+            $(".layui-form").html(html);
+            form.render();
+
+
+
+        },'get','application/json; charset=UTF-8',false);
+
+
         var editor;
         editor = KindEditor.create('#content', {
             height : "500px",
@@ -126,23 +141,15 @@ function child(obj){
                 'insertunorderedlist', '|', 'emoticons', 'image', 'link', , 'unlink', '|',
                 'lineheight', 'quickformat', 'hr', 'table', 'fullscreen','preview'],
             filePostName: "file",
-            uploadJson : '/api/upload/qiniu',
+            uploadJson : '/api/upload/file/qiniu',
             cssData : "img{max-width:100%;}"
         });
 
-        inputTags.render({
-            elem:'#inputTags',//定义输入框input对象
-            valinput:'#tags',
-            content: article.tags.split(","),//默认标签
-            aldaBtn: false,//是否开启获取所有数据的按钮
-            done: function(value){ //回车后的回调
-                console.log(value)
-            }
-        });
+
         //封面图片上传
         upload.render({
             elem: '#picBtn'
-            ,url: '/api/upload/qiniu' //改成您自己的上传接口
+            ,url: '/api/upload/file/qiniu' //改成您自己的上传接口
             ,done: function(res){
                 //如果上传失败
                 if(res.code == 0){

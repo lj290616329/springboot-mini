@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>我要咨询</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.mobile.css">
+    <link rel="stylesheet" href="/layuiadmin/layui/css/modules/layim/mobile/layim.css">
+    <link rel="stylesheet" href="/layuiadmin/layui/css/modules/layer/default/layer.css">
+</head>
+<style>
+.layui-layim-tab{
+    border-bottom:#fff solid 2rem;
+}
+.layim-chat-footer{
+    border-bottom: #eee solid 2rem;
+}
+.layim-chat-tool span{
+    font-size: 38px;
+}
+.layim-chat-main ul{
+    overflow-y: scroll;
+}
+.layim-chat-main, .layim-content{overflow-y: scroll;}
+.chat-log-box{display: none;z-index: 9999999999;position: fixed;top:0;left: 0;right: 0;bottom: 0;}
+</style>
+<body>
+
+<div class="chat-log-box">
+
+</div>
+
+<textarea title="消息模版" id="LAY_tpl" style="display:none;">
+    <div class="layim-panel layui-m-anim-left">
+        <div class="layim-title layui-layer-close" style="background-color: #36373C;">
+            <p><i class="layui-icon layim-chat-back"></i>聊天记录</p>
+        </div>
+        <div class="layui-unselect layim-content">
+            <div class="layim-chat layim-chat-friend">
+                <div class="layim-chat-main">
+                    <ul>
+                       {{# layui.each(d.data, function(index, item){
+                          if(item.mine){ }}
+                            <li class="layim-chat-li layim-chat-mine"><div class="layim-chat-user"><img src="{{ item.avatar }}"><cite><i>{{item.timestamp}}</i>{{ item.username }}</cite></div><div class="layim-chat-text">{{ layui.data.content(item.content) }}</div></li>
+                          {{# } else { }}
+                            <li class="layim-chat-li"><div class="layim-chat-user"><img src="{{ item.avatar }}"><cite>{{ item.username }}<i>{{item.timestamp}}</i></cite></div><div class="layim-chat-text">{{ layui.data.content(item.content) }}</div></li>
+                          {{# }
+                        }); }}
+                    </ul>
+                </div>
+                <div class="layim-chat-footer layui-layer-close">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</textarea>
+<script src="/js/reconnecting-websocket.min.js"></script>
+<script src="/layuiadmin/layui/layui.js"></script>
+<script>
+layui.config({
+    version:120//静态资源所在路径
+}).use(['upload','layer','jquery','mobile'], function(){
+    var mobile = layui.mobile
+        ,layim = mobile.layim
+        ,laytpl = layui.laytpl
+        ,$ = layui.jquery
+        ,cache  = layim.cache();
+    var connect = function (data) {
+        var wsUrl = window.location.origin.replace("http","ws")+"/websocket/"+data.mine.id+"/0";
+        ws = new ReconnectingWebSocket(wsUrl, null, {debug: true, reconnectInterval: 3000});
+        ws.onmessage = function (ev) {
+            console.log(ev);
+            var chat = JSON.parse(ev.data);
+            if (chat['type'] === 'chatMessage') {
+                layim.getMessage(chat['data']);
+            }
+        };
+        ws.onopen = function (evt) {
+            console.log("建立链接");
+            init_im(data);
+        };
+        // 断开 web socket 连接成功触发事件
+        ws.onclose = function (evt) {
+            console.log("关闭!!!")
+        };
+        // 通信发生错误时触发
+        ws.onerror = function (evt) {
+            console.log('通信错误：' + evt.data);
+        };
+
+        window.onbeforeunload = function() {
+            ws.close();
+        };
+    };
+    var init_im = function(data){
+        layui.data('layim-mobile', {
+            key: data.mine.id
+            ,value: {'chatlog':data.chatlog,'history':data.history}
+        });
+        //基础配置
+        layim.config({
+            title:"我的咨询",
+            init: {
+                mine: data.mine,//设置我的基础信息
+                friend:data.friend
+            }
+            ,uploadImage: {
+                url: '/api/upload/file/qiniu' //接口地址
+            }
+            ,uploadFile: {
+                url: '/api/upload/file/qiniu' //接口地址
+            },
+            tabIndex:1,
+            voice:false,
+            isNewFriend:false,
+            tool: [{
+                alias: 'chatlog' //工具别名
+                ,title: '聊天记录' //工具名称
+                ,iconUnicode: '&#xe60e;' //图标字体的unicode，可不填
+                ,iconClass: '' //图标字体的class类名
+            }],
+            copyright:false
+        });
+
+        layui.data('layim', {
+            key: cache.mine.id
+            ,value: local
+        });
+
+
+        layim.on('chatlog', function(obj, ul){
+            console.log(obj); //得到当前会话对象的基本信息
+            console.log(ul); //得到当前聊天列表所在的ul容器，比如可以借助他来实现往上插入更多记录
+            chatLog(obj.id);
+        });
+        layim.on('tool(chatlog)', function(a,send, obj){
+            //弹出一个更多聊天记录面板
+            console.log(obj)
+            chatLog(obj.data.id);
+        });
+        var chatLog = function(chatId){
+            $.ajax({
+                url:'/mobile/chat/history/'+chatId,
+                type:'get',
+                dataType:'json',
+                success:function(res){
+                    console.log(res);
+                    if(res.code==0){
+                        var html = laytpl(LAY_tpl.value).render({
+                            data: res.data
+                        });
+                        $(".chat-log-box").html(html).fadeIn(300);
+                        $('.layui-layer-close').on('click',  function() {
+                            $(".chat-log-box").fadeOut(300);
+                        });
+                    }
+                }
+            });
+        };
+        layim.on('chatChange', function(obj){
+            console.log(obj);
+        });
+        //发送消息
+        layim.on("sendMessage", function (res) {
+            var To = res.to;
+            var Mine = res.mine;
+            var msg = {"type":"chatMessage","data":{
+                    "username":Mine.username,
+                    "avatar":Mine.avatar,
+                    "id":To.id,
+                    "type":"friend",
+                    "content":Mine.content,
+                    "fromid":Mine.id,
+                    "toid":To.id
+                }};
+            ws.send(JSON.stringify(msg));
+        });
+        layim.showNew("more",false);
+        layim.showNew("find",false);
+    };
+    $.ajax({
+        url:'/mobile/chat/init',
+        type:'get',
+        contentType:'application/json; charset=UTF-8',
+        dataType:'json',
+        success:function (res) {
+            console.log(res);
+            if(res.code==0){
+                connect(res.data);
+            }
+        }
+    });
+
+});
+</script>
+</body>
+</html>

@@ -18,11 +18,7 @@ layui.config({
                 if(data!= null&&data.length > 0){
 
                     $.each(data,function(index,item){
-                        if(index == 0){
-                            ulHtml += '<li class="layui-nav-item layui-nav-itemed">';
-                        }else{
-                            ulHtml += '<li class="layui-nav-item">';
-                        }
+                        ulHtml += '<li class="layui-nav-item">';
                         ulHtml += '<a href="javascript:;">';
                         ulHtml += '<i class="layui-icon '+item.icon+'"></i><cite>'+item.title+'</cite>';
                         ulHtml += '</a>'

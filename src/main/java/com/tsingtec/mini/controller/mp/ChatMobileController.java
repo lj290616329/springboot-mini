@@ -1,7 +1,7 @@
-package com.tsingtec.mini.controller.mini;
+package com.tsingtec.mini.controller.mp;
 
 import com.google.common.collect.Lists;
-import com.tsingtec.mini.config.jwt.JwtUtil;
+import com.google.common.collect.Maps;
 import com.tsingtec.mini.entity.mini.Doctor;
 import com.tsingtec.mini.entity.mp.Information;
 import com.tsingtec.mini.entity.mp.MpUser;
@@ -31,9 +31,9 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/wxs/chat")
-@Api(tags = "小程序模块--客服管理")
-public class ChatMiniController {
+@RequestMapping("/mobile/chat")
+@Api(tags = "公众号模块--客服管理")
+public class ChatMobileController {
 
     @Autowired
     private ChatlogService chatlogService;
@@ -43,12 +43,6 @@ public class ChatMiniController {
 
     @Autowired
     private ChatIdService chatIdService;
-
-    @Autowired
-    private MpUserService mpUserService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
 
     @Autowired
     private DoctorService doctorService;
@@ -65,9 +59,7 @@ public class ChatMiniController {
     @GetMapping("/init/{fid}")
     @ApiOperation(value = "获取聊天处理器主面板列表信息")
     public DataResult<ChatInitDataRespVO> init(@PathVariable("fid")Integer fid){
-        String token = HttpContextUtils.getToken();
-        String unionid = jwtUtil.getClaim(token,"unionid");
-        MpUser mpUser = mpUserService.findByUnionId(unionid);
+        MpUser mpUser =  (MpUser) HttpContextUtils.getHttpServletRequest().getSession().getAttribute("mp_user");
 
         DataResult<ChatInitDataRespVO> result = DataResult.success();
         ToRespVO to = friendService.get(fid);
@@ -110,19 +102,52 @@ public class ChatMiniController {
      * 根据个人信息获取好友列表
      * @return
      */
-    @GetMapping("/friends/{mode}")
+    @GetMapping("/friends/{type}")
     @ApiOperation(value = "获取聊天处理器主面板列表信息")
-    public DataResult<List<FriendRespVO>> friends(@PathVariable("mode")String mode){
+    public DataResult<List<FriendRespVO>> friends(@PathVariable("type")String type){
         DataResult<List<FriendRespVO>> result = DataResult.success();
 
-        String token = HttpContextUtils.getToken();
-        String unionid = jwtUtil.getClaim(token,"unionid");
-        MpUser mpUser = mpUserService.findByUnionId(unionid);
+        MpUser mpUser =  (MpUser) HttpContextUtils.getHttpServletRequest().getSession().getAttribute("mp_user");
         //获取个人的id
-        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,mode.toLowerCase());
+        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,type.toLowerCase());
         //获取好友列表
         List<FriendRespVO> friends = friendService.getByUid(mineRespVO.getId());
         result.setData(friends);
+        return result;
+    }
+
+    /**
+     *
+     */
+    @GetMapping("/init")
+    public DataResult<ChatInitDataRespVO> init(){
+        MpUser mpUser =  (MpUser) HttpContextUtils.getHttpServletRequest().getSession().getAttribute("mp_user");
+        DataResult<ChatInitDataRespVO> result = DataResult.success();
+        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,"mobile");
+        List<FriendRespVO> friends = friendService.getByUid(mineRespVO.getId());
+        ChatInitDataRespVO chatInitDataRespVO = new ChatInitDataRespVO();
+
+        List<MineRespVO> chathistory = Lists.newArrayList();
+        friends.forEach(friendRespVO -> {
+            chathistory.addAll(friendRespVO.getList());
+        });
+        Map<String,MineRespVO> history = Maps.newHashMap();
+        chathistory.forEach(s->{
+            s.setType("friend");
+            history.put("friend"+s.getId(),s);
+        });
+        chatInitDataRespVO.setHistory(history);
+
+        chatInitDataRespVO.setMine(mineRespVO);
+        chatInitDataRespVO.setFriend(friends);
+        List<Integer> chatids = chatIdService.getIdByIdsLike(mineRespVO.getId());
+
+        //获取对话内容
+        Map<String,List<ChatlogRespVO>> chatlog = chatlogService.findByChatidInLimit(mineRespVO.getId(),chatids);
+
+        chatInitDataRespVO.setChatlog(chatlog);
+
+        result.setData(chatInitDataRespVO);
         return result;
     }
 
@@ -165,6 +190,18 @@ public class ChatMiniController {
             throw new BusinessException(BaseExceptionType.MINI_ERROR,"对话对象不存在");
         }
         result.setData(mineRespVO.getId());
+        return result;
+    }
+
+
+    @GetMapping("/history/{chatId}")
+    @ApiOperation(value = "获取聊天处理器主面板列表信息")
+    public DataResult<List<ChatlogRespVO>> history(@PathVariable("chatId")Integer chatId){
+        DataResult<List<ChatlogRespVO>> result = DataResult.success();
+        MpUser mpUser =  (MpUser) HttpContextUtils.getHttpServletRequest().getSession().getAttribute("mp_user");
+        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,"mobile");
+        List<ChatlogRespVO> chatlogRespVOS = chatlogService.getChatLogByChatid(mineRespVO.getId(),chatId);
+        result.setData(chatlogRespVOS);
         return result;
     }
 }

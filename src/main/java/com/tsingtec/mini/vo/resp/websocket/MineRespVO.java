@@ -1,7 +1,8 @@
 package com.tsingtec.mini.vo.resp.websocket;
 
-import com.tsingtec.mini.entity.websocket.Chatlog;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @Author lj
@@ -16,5 +17,16 @@ public class MineRespVO {
     private String sign;//签名
     private String status="online"; //在线状态 online：在线、hide：隐身
     private Integer unRead=0;
-    private Chatlog chatlog;
+
+    private Date historyTime;
+
+    private String content;
+
+    private String type;
+
+    private String name;
+
+    public String getName(){
+        return username;
+    }
 }

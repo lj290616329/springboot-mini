@@ -33,4 +33,6 @@ public class Doctor extends BaseEntity {
     private String description;//简介
     private String introduce;//具体介绍
 
+    private Boolean status=true;//状态
+
 }

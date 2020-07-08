@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, Integer>, JpaSpecificationExecutor<Friend> {
-    Friend findByUidAndType(Integer uid, String type);
+    Friend findByUidAndMode(Integer uid, String type);
 }

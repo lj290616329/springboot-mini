@@ -52,7 +52,7 @@ public class ChatController {
         Integer aid = HttpContextUtils.getAid();
         Doctor doctor = doctorService.findByAid(aid);
         if(null!=doctor){
-            MineRespVO mineRespVO = friendService.getByUidAndType(doctor.getMpUser(),"pc");
+            MineRespVO mineRespVO = friendService.getByUidAndMode(doctor.getMpUser(),"pc");
             List<FriendRespVO> friends = friendService.getByUid(mineRespVO.getId());
             ChatInitDataRespVO chatInitDataRespVO = new ChatInitDataRespVO();
             chatInitDataRespVO.setMine(mineRespVO);

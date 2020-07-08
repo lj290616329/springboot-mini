@@ -1,5 +1,6 @@
 package com.tsingtec.mini.config.webSocket;
 
+import com.google.common.collect.Lists;
 import com.tsingtec.mini.entity.websocket.Chatlog;
 import com.tsingtec.mini.service.ChatIdService;
 import com.tsingtec.mini.service.ChatlogService;
@@ -23,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-@ServerEndpoint("/websocket/{uid}")
+@ServerEndpoint("/websocket/{uid}/{brief}")
 public class WebSocketServer {
 
     /**静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。*/
@@ -55,9 +56,10 @@ public class WebSocketServer {
     }
 
     /**
+     * brief 是否极简模式,非极简模式下将未读信息一股脑都发送出去~
      * 连接建立成功调用的方法*/
     @OnOpen
-    public void onOpen(Session session,@PathParam(value = "uid") Integer uid) {
+    public void onOpen(Session session,@PathParam(value = "uid") Integer uid,@PathParam(value = "brief") Boolean brief) {
         this.session = session;
         this.uid = uid;
         if(webSocketMap.containsKey(uid)){
@@ -75,6 +77,19 @@ public class WebSocketServer {
             sendMessage("{\"type\":\"success connect\"}");
         } catch (IOException e) {
             log.error("用户:"+uid+",网络异常!!!!!!");
+        }
+        if(!brief){
+            List<Integer> toids = Lists.newArrayList(uid);
+            List<Chatlog> chatlogs = chatlogService.findByToidInAndStatus(toids,false);
+            chatlogs.forEach(c ->{
+                MessageReqVO m = BeanMapper.map(c, MessageReqVO.class);
+                try {
+                    sendMessage(m.toString());
+                    chatlogService.update(c);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                };
+            });
         }
     }
 

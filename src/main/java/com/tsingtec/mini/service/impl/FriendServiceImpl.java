@@ -3,6 +3,7 @@ package com.tsingtec.mini.service.impl;
 import com.google.common.collect.Lists;
 import com.tsingtec.mini.entity.mp.MpUser;
 import com.tsingtec.mini.entity.websocket.ChatId;
+import com.tsingtec.mini.entity.websocket.Chatlog;
 import com.tsingtec.mini.entity.websocket.Friend;
 import com.tsingtec.mini.repository.ChatIdRepository;
 import com.tsingtec.mini.repository.ChatLogRepository;
@@ -45,13 +46,13 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Friend checkByUidAndType(Integer uid, String type) {
-        return friendRepository.findByUidAndType(uid,type);
+    public Friend checkByUidAndMode(Integer uid, String type) {
+        return friendRepository.findByUidAndMode(uid,type);
     }
 
     @Override
-    public MineRespVO getByUidAndType(MpUser mpUser, String type) {
-        Friend friend = checkByUidAndType(mpUser.getId(),type);
+    public MineRespVO getByUidAndMode(MpUser mpUser, String type) {
+        Friend friend = checkByUidAndMode(mpUser.getId(),type);
         if(null==friend){
             friend = new Friend();
             friend.setAvatar(mpUser.getHeadImgUrl());
@@ -74,7 +75,13 @@ public class FriendServiceImpl implements FriendService {
 
             friend.setUnRead(chatLogRepository.countByChatidAndFromidAndStatus(chatId.getId(),friend.getId(),false));
             //获取最后收到的信息
-            friend.setChatlog(chatLogRepository.getDistinctFirstByChatidAndStatusOrderByIdDesc(chatId.getId(),true));
+
+            Chatlog chatlog = chatLogRepository.getDistinctFirstByChatidAndStatusOrderByIdDesc(chatId.getId(),true);
+            if(null!=chatlog){
+                friend.setContent(chatlog.getContent());
+                friend.setHistoryTime(chatlog.getCreateTime());
+            }
+            //friend.setChatlog(chatLogRepository.getDistinctFirstByChatidAndStatusOrderByIdDesc(chatId.getId(),true));
         });
         /**
          * 只设置一个分组

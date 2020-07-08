@@ -47,7 +47,6 @@ public class ChatlogServiceImpl implements ChatlogService {
     @Override
     public List<ChatlogRespVO> getChatLogByChatid(Integer uid, Integer chatid) {
         List<Chatlog> chatlogs = chatLogRepository.getChatlogByChatidOrderByCreateTimeDesc(chatid);
-        System.out.println(chatlogs);
         chatlogs.parallelStream().forEach((t)->
                 t.setMine(t.getFromid().equals(uid))
         );
@@ -56,14 +55,38 @@ public class ChatlogServiceImpl implements ChatlogService {
         return chatlogRespVOS;
     }
 
+    /**
+     * 每个对话获取最后20条记录,主要用于公众号和web管理后台
+     * @param fromid
+     * @param chatids
+     * @return
+     */
     @Override
-    public Map<String,List<ChatlogRespVO>> findByChatids(Integer uid,List<Integer> chatids) {
-        List<Chatlog> chatlogs = chatLogRepository.findByChatidIn(chatids);
+    public Map<String,List<ChatlogRespVO>> findByChatidInLimit(Integer fromid,List<Integer> chatids) {
+        List<Chatlog> chatlogs = chatLogRepository.findByChatidInLimit(chatids);
         chatlogs.parallelStream().forEach((t)->
-                t.setMine(t.getFromid().equals(uid))
+                t.setMine(t.getFromid().equals(fromid))
         );
         List<ChatlogRespVO> chatlogRespVOS = BeanMapper.mapList(chatlogs, ChatlogRespVO.class);
 
         return chatlogRespVOS.stream().collect(Collectors.groupingBy(s -> "friend"+s.getChatid()));
     }
+
+    /**
+     * 每个对话获取所有记录,主要用于小程序,直接展示所有的记录
+     * @param fromid
+     * @param chatids
+     * @return
+     */
+    @Override
+    public Map<String,List<ChatlogRespVO>> findByChatids(Integer fromid,List<Integer> chatids) {
+        List<Chatlog> chatlogs = chatLogRepository.findByChatidIn(chatids);
+        chatlogs.parallelStream().forEach((t)->
+                t.setMine(t.getFromid().equals(fromid))
+        );
+        List<ChatlogRespVO> chatlogRespVOS = BeanMapper.mapList(chatlogs, ChatlogRespVO.class);
+
+        return chatlogRespVOS.stream().collect(Collectors.groupingBy(s -> "friend"+s.getChatid()));
+    }
+
 }

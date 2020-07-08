@@ -38,6 +38,9 @@ public interface ChatlogService {
     List<ChatlogRespVO> getChatLogByChatid(Integer uid, Integer chatid);
 
 
-    Map<String,List<ChatlogRespVO>> findByChatids(Integer uid, List<Integer> chatids);
+    Map<String,List<ChatlogRespVO>> findByChatids(Integer fromid, List<Integer> chatids);
+
+
+    Map<String,List<ChatlogRespVO>> findByChatidInLimit(Integer fromid, List<Integer> chatids);
 
 }

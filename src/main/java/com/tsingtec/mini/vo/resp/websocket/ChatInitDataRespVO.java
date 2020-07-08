@@ -14,6 +14,7 @@ import java.util.Map;
 public class ChatInitDataRespVO {
     private MineRespVO mine;
     private List<FriendRespVO> friend;
-    private Map<String,List<ChatlogRespVO>> history;
+    private Map<String,List<ChatlogRespVO>> chatlog;
     private ToRespVO to;
+    private Map<String,MineRespVO> history;
 }

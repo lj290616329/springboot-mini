@@ -66,17 +66,13 @@ public class WxMiniAuthController {
         log.info("登录信息为:{}",wxLoginVo);
         String code = wxLoginVo.getCode();
         if(StringUtils.isBlank(code)){
-            result.setCode(-1);
-            result.setMsg("授权信息不全,请重新进行授权");
-            return result;
+            return DataResult.fail("授权信息不全,请重新进行授权");
         }
         try {
             WxMaJscode2SessionResult session = wxService.getUserService().getSessionInfo(code);
 
             if (!wxService.getUserService().checkUserInfo(session.getSessionKey(), wxLoginVo.getRawData(), wxLoginVo.getSignature())) {
-                result.setCode(-1);
-                result.setMsg("user check failed");
-                return result;
+                return DataResult.fail("user check failed");
             }
             // 解密用户信息
             WxMaUserInfo userInfo = wxService.getUserService().getUserInfo(session.getSessionKey(), wxLoginVo.getEncryptedData(), wxLoginVo.getIv());
@@ -102,9 +98,7 @@ public class WxMiniAuthController {
             }
             result.setData(new BaseUserRespVO(type,ifAuth,token));
         }catch (WxErrorException e) {
-            result.setCode(-1);
-            result.setMsg("授权失败,请稍后再试!");
-            return result;
+            return DataResult.fail("授权失败,请稍后再试!");
         }
         return result;
     }
@@ -119,9 +113,7 @@ public class WxMiniAuthController {
     public DataResult<BaseUserRespVO> login(String code) {
         DataResult<BaseUserRespVO> result = DataResult.success();
         if (StringUtils.isBlank(code)) {
-            result.setCode(-1);
-            result.setMsg("授权信息不全,请重新进行授权");
-            return result;
+            return DataResult.fail("授权信息不全,请重新进行授权!");
         }
         final WxMaService wxService = WxMaConfiguration.getMaService();
         try {
@@ -129,8 +121,6 @@ public class WxMiniAuthController {
             log.info(session.toString());
             MpUser mpUser = mpUserService.findByUnionId(session.getUnionid());
             if(null != mpUser){
-                result.setCode(0);
-                result.setMsg("登录成功");
                 String token = jwtUtil.getToken(mpUser);
 
                 Boolean ifAuth = informationService.ifAuth(mpUser.getId());
@@ -141,13 +131,11 @@ public class WxMiniAuthController {
                 }
                 result.setData(new BaseUserRespVO(type,ifAuth,token));
             }else{
-                result.setCode(-1);
-                result.setMsg("登录成功");
+                return DataResult.fail("登录失败!");
             }
         } catch (WxErrorException e) {
             log.error(e.getMessage(), e);
-            result.setCode(-1);
-            result.setMsg("登录失败");
+            return DataResult.fail("登录失败!");
         }
         return result;
     }

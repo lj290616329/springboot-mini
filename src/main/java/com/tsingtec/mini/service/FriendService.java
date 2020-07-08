@@ -10,8 +10,8 @@ import com.tsingtec.mini.vo.resp.websocket.ToRespVO;
 import java.util.List;
 
 public interface FriendService {
-    Friend checkByUidAndType(Integer uid, String type);
-    MineRespVO getByUidAndType(MpUser mpUser, String type);
+    Friend checkByUidAndMode(Integer uid, String mode);
+    MineRespVO getByUidAndMode(MpUser mpUser, String mode);
     List<FriendRespVO> getByUid(Integer uid);
     void update(SignReqVO signReqVO);
     ToRespVO get(Integer id);

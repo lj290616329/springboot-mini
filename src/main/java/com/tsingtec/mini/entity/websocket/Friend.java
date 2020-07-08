@@ -1,5 +1,6 @@
 package com.tsingtec.mini.entity.websocket;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tsingtec.mini.entity.BaseEntity;
 import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.Date;
 
 /**
  * @Author lj
@@ -25,12 +27,17 @@ public class Friend extends BaseEntity {
     private String username;//用户名
     private String avatar;//头像
     private String sign;//签名
-    private String type;//mobileOR pc
+    private String type="friend";
+
+    @JsonIgnore
+    private String mode;//mobileOR pc
 
     @Transient
     private Integer unRead=0;
 
     @Transient
-    private Chatlog chatlog;
+    private String content;
 
+    @Transient
+    private Date historyTime;
 }

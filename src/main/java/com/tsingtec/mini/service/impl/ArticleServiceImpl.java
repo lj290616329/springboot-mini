@@ -48,6 +48,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public ArticleRespVO findById(Integer id) {
         Article article = articleRepository.getOne(id);
+        if(null==article){
+            throw new BusinessException(BaseExceptionType.MINI_ERROR,"图文不存在!");
+        }
         return BeanMapper.map(article,ArticleRespVO.class);
     }
 

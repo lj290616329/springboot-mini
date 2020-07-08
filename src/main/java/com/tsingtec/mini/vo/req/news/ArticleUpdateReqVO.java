@@ -30,14 +30,14 @@ public class ArticleUpdateReqVO {
 
     private Boolean ifShowPic = false;
 
-    @ApiModelProperty(value = "文章简介",name="name")
+    @ApiModelProperty(value = "简介",name="description")
     private String description;//简介
 
-    @ApiModelProperty(value = "显示名称",name="name")
-    @NotBlank(message = "显示名称不能为空")
+    @ApiModelProperty(value = "文章内容",name="content")
+    @NotBlank(message = "文章内容不能为空")
     private String content;//内容
 
-    @ApiModelProperty(value = "显示名称",name="name")
-    @NotNull(message = "显示名称不能为空")
+    @ApiModelProperty(value = "文章类型",name="tag")
+    @NotNull(message = "请选择文章类型")
     private Integer tag; //标签类型
 }

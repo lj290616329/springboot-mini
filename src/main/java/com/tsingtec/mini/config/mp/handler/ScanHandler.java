@@ -2,13 +2,13 @@ package com.tsingtec.mini.config.mp.handler;
 
 import com.tsingtec.mini.entity.mp.MpUser;
 import com.tsingtec.mini.service.MpUserService;
+import com.tsingtec.mini.utils.BeanUtil;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +33,7 @@ public class ScanHandler extends AbstractHandler {
                 .userInfo(wxMessage.getFromUser(), null);
             if (userWxInfo != null) {
                 MpUser mpUser = new MpUser();
-                BeanUtils.copyProperties(userWxInfo, mpUser);
+                BeanUtil.copyPropertiesIgnoreNull(userWxInfo, mpUser);
                 mpUserService.save(mpUser);
             }
         } catch (WxErrorException e) {

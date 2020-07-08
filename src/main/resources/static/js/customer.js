@@ -86,9 +86,9 @@ layui.use(['layim','upload','CoreUtil'],function(){
             }
         },"PUT",'application/json; charset=UTF-8',false);
     });
-
+    //0 代表非极简模式,非客服模式
     var connect = function (uid) {
-        var wsUrl = window.location.origin.replace("http","ws")+"/websocket/"+uid;
+        var wsUrl = window.location.origin.replace("http","ws")+"/websocket/"+uid+"/0";
         ws = new ReconnectingWebSocket(wsUrl, null, {debug: true, reconnectInterval: 3000});
         ws.onmessage = function (ev) {
             console.log(ev);

@@ -68,7 +68,7 @@ public class DoctorMiniController {
         String unionid = jwtUtil.getClaim(token,"unionid");
         MpUser mpUser = mpUserService.findByUnionId(unionid);
         DataResult result = DataResult.success();
-        doctorService.update(mpUser.getId(),vo);
+        doctorService.updateByUid(mpUser.getId(),vo);
         return result;
     }
 
@@ -122,7 +122,6 @@ public class DoctorMiniController {
         String token = HttpContextUtils.getToken();
         String unionid = jwtUtil.getClaim(token,"unionid");
         MpUser mpUser = mpUserService.findByUnionId(unionid);
-        System.out.println(src);
         String id = jwtUtil.getClaim2(src,"qrCode");
         result.setData(evaluationService.bind(mpUser.getId(),Integer.valueOf(id)));
         return result;

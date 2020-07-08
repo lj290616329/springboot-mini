@@ -74,15 +74,6 @@
                     {type: 'checkbox', fixed: 'left'},
                     {field: 'pic', title: '封面图', templet: '#imgTpl'},
                     {field: 'title', title: '标题', width: 130, sort: true, filter: true},
-                    { field: 'tags', title: '文章标签' ,filter: true , templet: function (d) {
-                            var tags = d.tags.split(",");
-                            var html="";
-                            for(var  i=0;i<tags.length;i++){
-                                html +="<span class=\"layui-badge layui-bg-green\">"+tags[i]+"</span>"
-                            }
-                            return html;
-                        }
-                    },
                     {field: 'createTime', title: '录入时间',width: 165,sort: true,filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
                     {field: 'updateTime', title: '更新时间',width: 165,filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
                     {width:300,toolbar:"#tool",title:'操作'}

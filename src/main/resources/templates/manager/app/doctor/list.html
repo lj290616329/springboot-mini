@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/soulTable.css">
+    <link rel="stylesheet" href="/layuiadmin/style/admin.css">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="doctor_table_div">
+        <table  id="doctor_table" lay-filter="doctor_table"></table>
+    </div>
+</div>
+
+</body>
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-group">
+        <button type="button" class="layui-btn" lay-event="add">
+            <i class="layui-icon layui-icon-addition"></i> 新增
+        </button>
+    </div>
+</script>
+<script type="text/html" id="tool">
+    <a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="qcode"><i class="layui-icon layui-icon-cols"></i>二维码</a>
+</script>
+<script type="text/html" id="status">
+    {{#  if(d.status){ }}
+    <input type="checkbox" name="status" lay-skin="switch" checked   lay-text="冻结|开放"  value= {{ d.id}}  lay-filter="basic" >
+    {{#  } else { }}
+    <input type="checkbox" name="status" lay-skin="switch"  lay-text="冻结|开放"  value= {{ d.id}} lay-filter="basic" >
+    {{#  } }}
+</script>
+
+<script src="/layuiadmin/layui/layui.js"></script>
+</html>
+<script>
+    var getTableData;
+    layui.config({
+        base: '/layuiadmin/'//静态资源所在路径
+    }).extend({
+        CoreUtil : 'core-util/CoreUtil',
+        soulTable: 'modules/soulTable',
+        tableChild: 'modules/tableChild',
+        tableMerge: 'modules/tableMerge',
+        tableFilter: 'modules/tableFilter',
+        excel: 'modules/excel',
+    }).use(['table','soulTable','laydate','transfer','CoreUtil'], function(){
+        var table = layui.table,soulTable = layui.soulTable;
+        var layer = layui.layer;
+        var $ = jQuery = layui.jquery;
+        var CoreUtil = layui.CoreUtil;
+        //渲染table
+        table.render({
+            id: 'doctor_table'
+            ,elem: '#doctor_table'
+            ,cols: [
+                [
+                    {field: 'name', title: '姓名', filter: true},
+                    {field: 'phone', title: '电话', filter: true},
+                    {field: 'createTime', title: '录入时间',width: 165,sort: true,filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
+                    {field: 'updateTime', title: '更新时间',width: 165,filter: {type: 'date[yyyy-MM-dd HH:mm:ss]'}},
+                    {filed: 'status',title:'状态',templet:'#status'},
+                    {width:300,toolbar:"#tool",title:'操作'}
+                ]
+            ]
+            ,height:"600"
+            ,even: true
+            ,page: true
+            ,limit: 10
+            ,toolbar:'#toolbar'
+            ,drag: false
+            //应用拖拽排序
+            ,done: function () {
+                soulTable.render(this)
+            }
+        });
+        /**
+         * 分页获取账号
+         */
+        getTableData = function(){
+            CoreUtil.sendAjax("/manager/doctor",{},function (res) {
+                table.reload('doctor_table', {
+                    data: res.data
+                })
+            },"GET",'application/json; charset=UTF-8',false);
+        };
+        /**
+         *获取一次数据
+         */
+        getTableData();
+
+        /**
+         * 头部工具栏
+         */
+        table.on('toolbar(doctor_table)', function(obj){
+            switch(obj.event){
+                case 'add':
+                    edit({});
+                    break;
+            };
+        });
+        /**
+         * table 列工具栏
+         */
+        table.on('tool(doctor_table)',function (obj) {
+            console.log(obj)
+            var data = obj.data;
+            switch (obj.event) {
+                case 'qcode':
+                    var userIds=[];
+                    userIds.push(data.id);
+                    tipDialog(userIds,data.name);
+                    break;
+                case 'edit':
+                    edit(data);
+                    break;
+            }
+        });
+
+        var edit = function (obj) {
+            var ifr = layer.open({
+                title: "医生编辑",
+                type: 2,
+                closeBtn: 0,
+                content: '/home/app/doctor/form',
+                area: ['300px', '300px'],
+                success: function (layero, index) {
+                    // 获取子页面的iframe
+                    var iframe = window['layui-layer-iframe' + index];
+                    // 向子页面的全局函数child传参
+                    iframe.child(obj)
+                }
+            });
+            layer.full(ifr);
+        };
+    });
+</script>

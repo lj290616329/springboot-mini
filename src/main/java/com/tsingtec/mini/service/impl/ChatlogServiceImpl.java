@@ -51,7 +51,6 @@ public class ChatlogServiceImpl implements ChatlogService {
                 t.setMine(t.getFromid().equals(uid))
         );
         List<ChatlogRespVO> chatlogRespVOS = BeanMapper.mapList(chatlogs, ChatlogRespVO.class);
-        System.out.println(chatlogRespVOS);
         return chatlogRespVOS;
     }
 
@@ -69,8 +68,9 @@ public class ChatlogServiceImpl implements ChatlogService {
         );
         List<ChatlogRespVO> chatlogRespVOS = BeanMapper.mapList(chatlogs, ChatlogRespVO.class);
 
-        return chatlogRespVOS.stream().collect(Collectors.groupingBy(s -> "friend"+s.getChatid()));
+        return chatlogRespVOS.stream().collect(Collectors.groupingBy(s -> "friend"+s.getFid()));
     }
+
 
     /**
      * 每个对话获取所有记录,主要用于小程序,直接展示所有的记录
@@ -86,7 +86,7 @@ public class ChatlogServiceImpl implements ChatlogService {
         );
         List<ChatlogRespVO> chatlogRespVOS = BeanMapper.mapList(chatlogs, ChatlogRespVO.class);
 
-        return chatlogRespVOS.stream().collect(Collectors.groupingBy(s -> "friend"+s.getChatid()));
+        return chatlogRespVOS.stream().collect(Collectors.groupingBy(s -> "friend"+s.getFid()));
     }
 
 }

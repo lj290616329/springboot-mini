@@ -1,5 +1,7 @@
-package com.tsingtec.mini.controller.manager.websocket;
+package com.tsingtec.mini.controller.manager.chat;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.tsingtec.mini.aop.annotation.LogAnnotation;
 import com.tsingtec.mini.entity.mini.Doctor;
 import com.tsingtec.mini.service.*;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author lj
@@ -54,7 +57,25 @@ public class ChatController {
         if(null!=doctor){
             MineRespVO mineRespVO = friendService.getByUidAndMode(doctor.getMpUser(),"pc");
             List<FriendRespVO> friends = friendService.getByUid(mineRespVO.getId());
+
             ChatInitDataRespVO chatInitDataRespVO = new ChatInitDataRespVO();
+
+            List<MineRespVO> chathistory = Lists.newArrayList();
+            friends.forEach(friendRespVO -> {
+                chathistory.addAll(friendRespVO.getList());
+            });
+            Map<String,MineRespVO> history = Maps.newHashMap();
+            chathistory.forEach(s->{
+                history.put("friend"+s.getId(),s);
+            });
+            chatInitDataRespVO.setHistory(history);
+            List<Integer> chatids = chatIdService.getIdByIdsLike(mineRespVO.getId());
+
+            //获取对话内容
+            Map<String,List<ChatlogRespVO>> chatlog = chatlogService.findByChatidInLimit(mineRespVO.getId(),chatids);
+
+            chatInitDataRespVO.setChatlog(chatlog);
+
             chatInitDataRespVO.setMine(mineRespVO);
             chatInitDataRespVO.setFriend(friends);
             result.setData(chatInitDataRespVO);

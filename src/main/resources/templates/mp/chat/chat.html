@@ -123,12 +123,6 @@ layui.config({
             copyright:false
         });
 
-        layui.data('layim', {
-            key: cache.mine.id
-            ,value: local
-        });
-
-
         layim.on('chatlog', function(obj, ul){
             console.log(obj); //得到当前会话对象的基本信息
             console.log(ul); //得到当前聊天列表所在的ul容器，比如可以借助他来实现往上插入更多记录

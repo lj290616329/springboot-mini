@@ -133,7 +133,6 @@ public class ChatMobileController {
         });
         Map<String,MineRespVO> history = Maps.newHashMap();
         chathistory.forEach(s->{
-            s.setType("friend");
             history.put("friend"+s.getId(),s);
         });
         chatInitDataRespVO.setHistory(history);

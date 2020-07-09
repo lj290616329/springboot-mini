@@ -1,5 +1,7 @@
 package com.tsingtec.mini.vo.resp.websocket;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,13 +14,13 @@ import java.util.Date;
 @Data
 public class ChatlogRespVO {
 
-    private Integer chatid;
 
     private String  username;//昵称
 
     private String avatar;//头像
 
-    private Integer id;//接收人id
+    @JsonProperty(value = "id")
+    private Integer fid;//friend id
 
     private String type = "friend";//类型
 
@@ -28,4 +30,17 @@ public class ChatlogRespVO {
 
     private Boolean mine = false;//是否自己
 
+    @JsonIgnore
+    private Integer fromid;
+
+    @JsonIgnore
+    private Integer toid;//接收人id
+
+    public Integer getFid(){
+        if(mine){
+            return toid;
+        }else {
+            return fromid;
+        }
+    }
 }

@@ -4,6 +4,7 @@ import com.tsingtec.mini.entity.websocket.Chatlog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public interface ChatLogRepository extends JpaRepository<Chatlog, Integer>, JpaS
 
 
     @Query(value = "SELECT e.* FROM socket_chat_log e WHERE ( SELECT count(DISTINCT em.id) FROM socket_chat_log em WHERE em.id > e.id AND em.chatid = e.chatid and e.status=1 and em.status=1) < 20 and e.chatid in(:chatids) and e.status=1",nativeQuery = true)
-    List<Chatlog> findByChatidInLimit(List<Integer> chatids);
+    List<Chatlog> findByChatidInLimit(@Param(value = "chatids") List<Integer> chatids);
 
     List<Chatlog> findByChatidIn(List<Integer> chatids);
 

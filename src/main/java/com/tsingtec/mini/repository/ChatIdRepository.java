@@ -4,6 +4,7 @@ import com.tsingtec.mini.entity.websocket.ChatId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface ChatIdRepository extends JpaRepository<ChatId, Integer>, JpaSpe
     ChatId findByIds(String ids);
 
     @Query(value = "select id from socket_chat_id where ids like :ids",nativeQuery = true)
-    List<Integer>  getIdByIdsLike(String ids);
+    List<Integer>  getIdByIdsLike(@Param(value = "ids") String ids);
 
     /**
      * 根据用户id 获取所以的朋友id
@@ -21,6 +22,6 @@ public interface ChatIdRepository extends JpaRepository<ChatId, Integer>, JpaSpe
      * @return
      */
     @Query(value = "select replace(replace(ids,:uid,''),'#','') ids from socket_chat_id where ids like :prem",nativeQuery = true)
-    List<Integer> getFidsByUid(String uid, String prem);
+    List<Integer> getFidsByUid(@Param(value = "uid") String uid,@Param(value = "prem")  String prem);
 
 }

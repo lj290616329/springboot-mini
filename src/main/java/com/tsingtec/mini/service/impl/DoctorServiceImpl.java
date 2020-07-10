@@ -39,6 +39,16 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorRepository.getOne(id);
     }
 
+
+    @Override
+    public Boolean ifByUid(Integer uid) {
+        Doctor doctor = doctorRepository.findByMpUser_Id(uid);
+        if(null==doctor){
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public DoctorRespVO findByUid(Integer uid) {
         Doctor doctor = doctorRepository.findByMpUser_Id(uid);

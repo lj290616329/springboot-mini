@@ -14,6 +14,8 @@ public interface DoctorService {
 
     Doctor findById(Integer id);
 
+    Boolean ifByUid(Integer uid);
+
     DoctorRespVO findByUid(Integer uid);
 
     void updateByUid(Integer uid, DoctorReqVO vo);

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -20,12 +21,12 @@ public interface ArticleTagRepository extends JpaRepository<ArticleTag, Integer>
     @Modifying
     @Transactional
     @Query("delete from ArticleTag a where a.id in (?1)")
-    void deleteBatch(List<Integer> ids);
+    void deleteBatch(@Param(value = "ids")List<Integer> ids);
 
 
     @Modifying
     @Transactional
     @Query("update ArticleTag set sort = :sort where id = :id")
-    void sort(Integer id, Integer sort);
+    void sort(@Param(value = "id") Integer id,@Param(value = "sort") Integer sort);
 
 }

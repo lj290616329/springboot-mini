@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -15,12 +16,12 @@ public interface ArticleRepository extends JpaRepository<Article, Integer>, JpaS
     @Modifying
     @Transactional
     @Query("delete from Article a where a.id in (?1)")
-    void deleteBatch(List<Integer> ids);
+    void deleteBatch(@Param(value = "ids") List<Integer> ids);
 
     @Modifying
     @Transactional
     @Query("update Article set sort = :sort where id = :id")
-    void sort(Integer id, Integer sort);
+    void sort(@Param(value = "id") Integer id,@Param(value = "sort")  Integer sort);
 
     @Query("select max(id) from Article")
     Integer maxId();
@@ -28,5 +29,5 @@ public interface ArticleRepository extends JpaRepository<Article, Integer>, JpaS
     @Modifying
     @Transactional
     @Query(value="update news_article set hits=hits+1 where id= :id",nativeQuery = true)
-    void hits(Integer id);
+    void hits(@Param(value = "id") Integer id);
 }

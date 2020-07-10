@@ -14,7 +14,6 @@ import com.tsingtec.mini.service.MpUserService;
 import com.tsingtec.mini.utils.BeanUtil;
 import com.tsingtec.mini.utils.DataResult;
 import com.tsingtec.mini.vo.req.mini.WxLoginReqVO;
-import com.tsingtec.mini.vo.resp.app.doctor.DoctorRespVO;
 import com.tsingtec.mini.vo.resp.app.mini.MiniUserInfoRespVO;
 import com.tsingtec.mini.vo.resp.base.BaseUserRespVO;
 import com.vip.vjtools.vjkit.mapper.JsonMapper;
@@ -92,8 +91,7 @@ public class WxMiniAuthController {
             String token = jwtUtil.getToken(mpUser);
             Boolean ifAuth = informationService.ifAuth(mpUser.getId());
             Integer type = 1;
-            DoctorRespVO doctor = doctorService.findByUid(mpUser.getId());
-            if(null != doctor){
+            if(doctorService.ifByUid(mpUser.getId())){
                 type = 2;
             }
             result.setData(new BaseUserRespVO(type,ifAuth,token));
@@ -125,8 +123,7 @@ public class WxMiniAuthController {
 
                 Boolean ifAuth = informationService.ifAuth(mpUser.getId());
                 Integer type = 1;
-                DoctorRespVO doctor = doctorService.findByUid(mpUser.getId());
-                if(null != doctor){
+                if(doctorService.ifByUid(mpUser.getId())){
                     type = 2;
                 }
                 result.setData(new BaseUserRespVO(type,ifAuth,token));

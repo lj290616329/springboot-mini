@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -15,7 +16,7 @@ public interface MenuRepository extends JpaRepository<Menu, Integer>, JpaSpecifi
     @Modifying
     @Transactional
     @Query("delete from Menu m where m.id in (?1)")
-    void deleteBatch(List<Integer> ids);
+    void deleteBatch(@Param(value = "ids")List<Integer> ids);
 
     List<Menu> findByPid(Integer pid);
 
@@ -27,5 +28,5 @@ public interface MenuRepository extends JpaRepository<Menu, Integer>, JpaSpecifi
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM sys_role_menu WHERE mid = ?1", nativeQuery = true)
-    void cancelMenuJoin(Integer ids);
+    void cancelMenuJoin(@Param(value = "ids")Integer ids);
 }

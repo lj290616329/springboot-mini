@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,7 @@ public class RoleServiceImpl implements RoleService {
 	private MenuService menuService;
 
 	@Override
+	@Transactional
 	public Role addRole(RoleAddReqVO vo) {
 		Role role = new Role();
 		role.setDescription(vo.getDescription());
@@ -47,6 +49,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
+	@Transactional
 	public void updateRole(RoleUpdateReqVO vo) {
 		Role role = roleRepository.getOne(vo.getId());
 		if (null==role){
@@ -63,6 +66,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
+	@Transactional
 	public Role findById(Integer id) {
 		Role role = roleRepository.findById(id).get();
 		if(null==role){
@@ -108,6 +112,7 @@ public class RoleServiceImpl implements RoleService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteBatch(List<Integer> rids) {
 
 		roleRepository.deleteBatch(rids);

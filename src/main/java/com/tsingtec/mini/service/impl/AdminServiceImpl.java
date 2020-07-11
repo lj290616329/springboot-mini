@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,8 +68,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public void save(Admin admin) {
-        admin.setUpdateTime(new Date());
         adminRepository.save(admin);
     }
 
@@ -98,6 +99,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public void insert(AdminAddReqVO vo) {
         Admin admin = findByLoginName(vo.getLoginName());
         if(admin!=null){
@@ -111,8 +113,6 @@ public class AdminServiceImpl implements AdminService {
         admin.setLoginName(vo.getLoginName());
         admin.setPassword(password);
         admin.setStatus(vo.getStatus());
-        admin.setCreateTime(new Date());
-        admin.setUpdateTime(new Date());
         adminRepository.save(admin);
     }
 
@@ -122,6 +122,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public void update(AdminUpdateReqVO vo) {
         Admin admin = findByLoginName(vo.getLoginName());
         //不是本身这个账号
@@ -136,11 +137,11 @@ public class AdminServiceImpl implements AdminService {
         admin.setLoginName(vo.getLoginName());
         admin.setPassword(password);
         admin.setStatus(vo.getStatus());
-        admin.setUpdateTime(new Date());
         adminRepository.save(admin);
     }
 
     @Override
+    @Transactional
     public void updatePwd(Integer id, AdminPwdReqVO vo) {
         Admin admin = adminRepository.getOne(id);
         String salt = admin.getSalt();
@@ -157,6 +158,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public void deleteBatch(List<Integer> aids) {
         adminRepository.deleteBatch(aids);
     }
@@ -179,11 +181,11 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public void setAdminRole(Integer aid, List<Integer> roleIds) {
         List<Role> roles = roleRepository.findAllById(roleIds);
         Admin admin = findById(aid);
         admin.setRoles(new HashSet<>(roles));
-        admin.setUpdateTime(new Date());
         adminRepository.save(admin);
     }
 }

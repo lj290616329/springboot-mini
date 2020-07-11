@@ -14,6 +14,7 @@ import com.tsingtec.mini.vo.resp.app.doctor.DoctorRespVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -60,6 +61,7 @@ public class DoctorServiceImpl implements DoctorService {
 
 
     @Override
+    @Transactional
     public void updateByUid(Integer uid, DoctorReqVO vo) {
         Doctor doctor = doctorRepository.findByMpUser_Id(uid);
         if(null==doctor){
@@ -70,6 +72,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Transactional
     public void add(DoctorReqVO doctorReqVO) {
         Doctor doctor = new Doctor();
         BeanUtil.copyPropertiesIgnoreNull(doctorReqVO,doctor);
@@ -82,6 +85,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Transactional
     public void updateById(Integer id, DoctorReqVO vo) {
         Doctor doctor = doctorRepository.getOne(id);
         if(null==doctor){
@@ -92,6 +96,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Transactional
     public void status(SwitchReqVO vo) {
         Doctor doctor = doctorRepository.getOne(vo.getId());
         if(null==doctor){
@@ -102,6 +107,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
+    @Transactional
     public void setAdmin(DoctorSetAdminReqVO vo) {
         Doctor doctor = doctorRepository.findByAid(vo.getAid());
         if(null==doctor){

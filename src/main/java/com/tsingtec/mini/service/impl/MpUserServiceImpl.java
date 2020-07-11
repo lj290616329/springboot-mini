@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,6 +88,7 @@ public class MpUserServiceImpl implements MpUserService {
     }
 
     @Override
+    @Transactional
     @CachePut(value="data",key = "'mpUser'+#mpUser.unionId")
     public MpUser save(MpUser mpUser) {
         MpUser saveUser = findByUnionId(mpUser.getUnionId());

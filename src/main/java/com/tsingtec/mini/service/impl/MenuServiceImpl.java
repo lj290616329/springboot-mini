@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -33,6 +34,7 @@ public class MenuServiceImpl implements MenuService {
 	}
 
 	@Override
+	@Transactional
 	public void insert(MenuAddReqVO vo) {
 		Menu menu=new Menu();
 		BeanUtils.copyProperties(vo,menu);
@@ -42,6 +44,7 @@ public class MenuServiceImpl implements MenuService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteById(Integer id) {
 		Menu menu = menuRepository.getOne(id);
 		/**
@@ -65,6 +68,7 @@ public class MenuServiceImpl implements MenuService {
 	}
 
 	@Override
+	@Transactional
 	public void update(MenuUpdateReqVO vo) {
 		Menu menu = findById(vo.getId());
 		if(null == menu){

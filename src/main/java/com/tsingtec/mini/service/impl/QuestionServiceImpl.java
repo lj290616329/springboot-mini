@@ -20,6 +20,7 @@ import org.apache.shiro.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -63,6 +64,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    @Transactional
     public void save(QuestionAddReqVO vo) {
         Question question = new Question();
         question = BeanMapper.map(vo,Question.class);
@@ -83,6 +85,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    @Transactional
     public void update(QuestionUpdateReqVO vo) {
         Question savequestion = questionRepository.getOne(vo.getId());
         if(null==savequestion){
@@ -93,11 +96,13 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    @Transactional
     public void deleteBatch(List<Integer> ids) {
         questionRepository.deleteBatch(ids);
     }
 
     @Override
+    @Transactional
     public void sort(List<SortReqVO> sorts) {
         sorts.forEach(sort -> {
             questionRepository.sort(sort.getId(),sort.getToSort());
@@ -115,6 +120,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    @Transactional
     public void basic(SwitchReqVO vo) {
         Question question = questionRepository.getOne(vo.getId());
         if(null == question){

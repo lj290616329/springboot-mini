@@ -13,8 +13,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,7 +63,6 @@ public class UserRealm extends AuthorizingRealm {
 		}else if(admin.UNVALID.equals(admin.getStatus())){
 			throw new DisabledAccountException("帐号已经禁止登录！");
 		}else{
-			admin.setUpdateTime(new Date());
 			adminService.save(admin);
 			return new SimpleAuthenticationInfo(admin,	admin.getPassword(), ByteSource.Util.bytes(admin.getSalt()), getName());
 		}

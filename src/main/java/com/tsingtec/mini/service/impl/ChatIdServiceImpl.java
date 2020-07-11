@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -32,6 +33,7 @@ public class ChatIdServiceImpl implements ChatIdService {
     }
 
     @Override
+    @Transactional
     @Cacheable(value="data",key="'chatId'+#toid+#fromid")
     public Integer getByToidAndFromId(Integer toid, Integer fromid) {
         String ids = ids(toid,fromid);

@@ -14,7 +14,6 @@ import java.util.List;
 public interface MaterialRepository extends JpaRepository<Material, Integer>, JpaSpecificationExecutor<Material> {
 
     @Modifying
-    @Transactional
     @Query("delete from Material m where m.id in (?1)")
     void deleteBatch(@Param(value = "mids")List<Integer> mids);
 

@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.List;
 @Repository
 public interface QuestionGroupRepository extends JpaRepository<QuestionGroup, Integer>, JpaSpecificationExecutor<QuestionGroup> {
@@ -19,13 +18,11 @@ public interface QuestionGroupRepository extends JpaRepository<QuestionGroup, In
     Integer maxId();
 
     @Modifying
-    @Transactional
     @Query("delete from QuestionGroup a where a.id in (?1)")
     void deleteBatch(@Param(value = "ids")List<Integer> ids);
 
 
     @Modifying
-    @Transactional
     @Query("update QuestionGroup set sort = :sort where id = :id")
     void sort(@Param(value = "id")Integer id, @Param(value = "sort")Integer sort);
 

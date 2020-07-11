@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -52,6 +53,7 @@ public class ArticleTagServiceImpl implements ArticleTagService {
     }
 
     @Override
+    @Transactional
     public void save(String name) {
         ArticleTag questionType = articleTagRepository.findByName(name);
         if(null!=questionType){
@@ -70,6 +72,7 @@ public class ArticleTagServiceImpl implements ArticleTagService {
     }
 
     @Override
+    @Transactional
     public void update(ArticleTagUpdateReqVO vo) {
         ArticleTag savequestionType = articleTagRepository.getOne(vo.getId());
         if(null==savequestionType){
@@ -85,11 +88,13 @@ public class ArticleTagServiceImpl implements ArticleTagService {
     }
 
     @Override
+    @Transactional
     public void deleteBatch(List<Integer> ids) {
         articleTagRepository.deleteBatch(ids);
     }
 
     @Override
+    @Transactional
     public void sort(List<SortReqVO> sorts) {
         sorts.forEach(sort -> {
             articleTagRepository.sort(sort.getId(),sort.getToSort());

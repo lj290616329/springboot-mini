@@ -26,8 +26,8 @@ public class WxMpInterceptor implements HandlerInterceptor {
 		MpUser user = (MpUser) session.getAttribute("mp_user");
 		// 如果session中没有user，表示没登陆
 		if (user == null) {
-			/*user = mpUserService.findByOpenid("onYmVwjc8JGuK3xmZ7iuzMR_2daU");
-			session.setAttribute("wx_user", user);
+			/*user = mpUserService.findByUnionId("ofkfww9S7ahbdtIaQyOpQMSrzHXc");
+			session.setAttribute("mp_user", user);
 			return true;*/
 			try {
 				String requestPath = request.getRequestURI();

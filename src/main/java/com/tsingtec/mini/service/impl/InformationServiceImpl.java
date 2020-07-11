@@ -11,6 +11,7 @@ import com.tsingtec.mini.vo.resp.app.mini.InformationRespVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -25,6 +26,7 @@ public class InformationServiceImpl implements InformationService {
     private InformationRepository informationRepository;
 
     @Override
+    @Transactional
     public void save(MpUser user, InformationReqVO vo) {
         Information information = informationRepository.findByMpUser_Id(user.getId());
         if(null==information){

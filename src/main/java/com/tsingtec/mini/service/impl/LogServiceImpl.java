@@ -11,9 +11,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import javax.persistence.criteria.Predicate;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,12 +59,13 @@ public class LogServiceImpl implements SysLogService {
     }
 
     @Override
+    @Transactional
     public void insert(SysLog sysLog) {
-        sysLog.setCreateTime(new Date());
         logRepository.save(sysLog);
     }
 
     @Override
+    @Transactional
     public void delete(List<Integer> ids) {
         logRepository.deleteBatch(ids);
     }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,7 @@ public class MaterialServiceImpl implements MaterialService {
     private MaterialRepository materialRepository;
 
     @Override
+    @Transactional
     public void save(Material material) {
         material.setUpdateTime(new Date());
         materialRepository.save(material);
@@ -52,6 +54,7 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
+    @Transactional
     public void deleteBatch(List<Integer> mids) {
         materialRepository.deleteBatch(mids);
     }

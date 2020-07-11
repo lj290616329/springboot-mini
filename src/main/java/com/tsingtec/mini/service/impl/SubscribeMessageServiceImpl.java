@@ -6,6 +6,8 @@ import com.tsingtec.mini.service.SubscribeMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 /**
  * @Author lj
  * @Date 2020/6/29 16:58
@@ -15,7 +17,9 @@ import org.springframework.stereotype.Service;
 public class SubscribeMessageServiceImpl implements SubscribeMessageService {
     @Autowired
     private SubscribeMessageRepository subscribeMessageRepository;
+
     @Override
+    @Transactional
     public void save(Integer uid, String tmplIds) {
         SubscribeMessage subscribeMessage = subscribeMessageRepository.findByUid(uid);
         if(null==subscribeMessage){
@@ -27,6 +31,7 @@ public class SubscribeMessageServiceImpl implements SubscribeMessageService {
     }
 
     @Override
+    @Transactional
     public void deleteByUid(Integer uid) {
         subscribeMessageRepository.deleteByUid(uid);
     }

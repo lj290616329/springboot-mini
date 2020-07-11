@@ -18,6 +18,7 @@ import com.vip.vjtools.vjkit.mapper.JsonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -51,6 +52,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
+    @Transactional
     public MineRespVO getByUidAndMode(MpUser mpUser, String type) {
         Friend friend = checkByUidAndMode(mpUser.getId(),type);
         if(null==friend){
@@ -94,6 +96,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
+    @Transactional
     public void update(SignReqVO signReqVO) {
         Friend friend = friendRepository.getOne(signReqVO.getId());
         friend.setSign(signReqVO.getSign());

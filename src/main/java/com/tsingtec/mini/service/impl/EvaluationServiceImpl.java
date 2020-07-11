@@ -31,6 +31,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ public class EvaluationServiceImpl implements EvaluationService {
     private JwtUtil jwtUtil;
 
     @Override
+    @Transactional
     public EvaluationResultResVO save(EvaluationAddReqVO vo){
         Evaluation evaluation = new Evaluation();
         Information information = informationRepository.findByMpUser_Id(vo.getMpUser().getId());
@@ -81,6 +83,7 @@ public class EvaluationServiceImpl implements EvaluationService {
     }
 
     @Override
+    @Transactional
     public void update(EvaluationUpdateReqVO vo) {
         Evaluation evaluation = evaluationRepository.getOne(vo.getId());
         evaluation.setResult(mapper.toJson(vo.getVos()));
@@ -179,6 +182,7 @@ public class EvaluationServiceImpl implements EvaluationService {
     }
 
     @Override
+    @Transactional
     public Integer bind(Integer uid, Integer id) {
         Doctor doctor = doctorRepository.findByMpUser_Id(uid);
         if(null==doctor){

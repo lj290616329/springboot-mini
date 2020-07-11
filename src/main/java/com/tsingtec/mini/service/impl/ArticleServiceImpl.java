@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -97,6 +98,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    @Transactional
     public void save(ArticleAddReqVO vo) {
         Article article = new Article();
         article = BeanMapper.map(vo,Article.class);
@@ -105,6 +107,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    @Transactional
     public void update(ArticleUpdateReqVO vo) {
         Article article = articleRepository.getOne(vo.getId());
         if(null==article){
@@ -115,11 +118,13 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    @Transactional
     public void deleteBatch(List<Integer> ids) {
         articleRepository.deleteBatch(ids);
     }
 
     @Override
+    @Transactional
     public void sort(List<SortReqVO> sorts) {
         sorts.forEach(sort -> {
             articleRepository.sort(sort.getId(),sort.getToSort());
@@ -154,6 +159,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    @Transactional
     @Cacheable(value = "data",key = "#p0+'#'+#p1")
     public void hits(String ip, Integer id) {
         articleRepository.hits(id);

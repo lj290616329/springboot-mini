@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -57,6 +58,7 @@ public class QuestionGroupServiceImpl implements QuestionGroupService {
     }
 
     @Override
+    @Transactional
     public void save(String name) {
         QuestionGroup questionType = questionGroupRepository.findByName(name);
         if(null!=questionType){
@@ -75,6 +77,7 @@ public class QuestionGroupServiceImpl implements QuestionGroupService {
     }
 
     @Override
+    @Transactional
     public void update(QuestionGroupReqVO vo) {
         QuestionGroup savequestionType = questionGroupRepository.getOne(vo.getId());
         if(null==savequestionType){
@@ -90,11 +93,13 @@ public class QuestionGroupServiceImpl implements QuestionGroupService {
     }
 
     @Override
+    @Transactional
     public void deleteBatch(List<Integer> ids) {
         questionGroupRepository.deleteBatch(ids);
     }
 
     @Override
+    @Transactional
     public void sort(List<SortReqVO> sorts) {
         List<Question> questions = Lists.newArrayList();
         List<QuestionGroup> questionGroups = Lists.newArrayList();

@@ -122,13 +122,14 @@ public class IndexController {
     @ApiOperation(value = "用户登录接口")
     public DataResult login(@RequestBody @Valid LoginReqVO vo) {
         DataResult result = DataResult.success();
+
         Subject subject = SecurityUtils.getSubject();
         if(StringUtils.isEmpty(subject.getSession().getAttribute("vrifyCode"))||!subject.getSession().getAttribute("vrifyCode").equals(vo.getVercode())){
             result.setCode(400);
             result.setMsg("验证码错误,请重新输入");
             return result;
         }
-
+        subject.logout();
         UsernamePasswordToken token = new UsernamePasswordToken(vo.getUsername(),vo.getPassword());
         try {
             subject.login(token);

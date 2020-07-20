@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,8 +47,17 @@ public class CSRFFilter implements Filter {
 		log.info("==进入CSRF过滤器===");
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
+
+		Enumeration e = req.getHeaders("Referer");
+		String referer="";
+		if(e.hasMoreElements()){
+			referer=(String)e.nextElement();
+		}else{
+			//直接访问的放行~
+			chain.doFilter(request, response);
+			return;
+		}
 		// 从http头中获取Referer
-		String referer = req.getHeader("Referer");
 		log.error(referer);
 		if(isExcludeUrl(referer)){
 			chain.doFilter(request, response);

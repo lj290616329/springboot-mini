@@ -24,7 +24,6 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -35,7 +34,6 @@ import javax.validation.Valid;
 @Slf4j
 @Api(tags = "视图",description = "负责返回视图")
 @Controller
-@RequestMapping("/index")
 public class IndexController {
 
     @Autowired
@@ -44,15 +42,8 @@ public class IndexController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @GetMapping("/login")
-    public String login(HttpServletRequest request,HttpServletResponse response, Model model){
-
-        Cookie cookie=new Cookie("JSESSIONID",request.getSession().getId());
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-
-
+    @GetMapping(value = {"/","/index","/login"})
+    public String login(Model model){
         Subject subject = SecurityUtils.getSubject();
         if(subject.isAuthenticated()){
             return "redirect:/home/index";
@@ -62,10 +53,10 @@ public class IndexController {
 
     @ResponseBody
     @GetMapping("getToken")
-    public DataResult<String> getToken(HttpServletRequest request){
+    public DataResult<String> getToken(){
         DataResult<String> result = DataResult.success();
-        String sessionid = request.getSession().getId();
-        String token = jwtUtil.loginToken(sessionid);
+        Subject subject = SecurityUtils.getSubject();
+        String token = jwtUtil.loginToken(subject.getSession().getId().toString());
         result.setData(token);
         return result;
     }
@@ -150,10 +141,6 @@ public class IndexController {
         }
         return result;
     }
-
-
-
-
 
     @GetMapping("/403")
     public String error403(){

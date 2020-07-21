@@ -92,8 +92,8 @@
                                 <div class="layui-col-xs5">
                                     <div style="margin-left: 10px;">
                                         <img id="vercodeImg" title="点击刷新验证码" alt="验证码"
-                                             onclick="this.src='/index/kaptcha?d='+new Date()*1"
-                                             src="/index/kaptcha?d=1"/>
+                                             onclick="this.src='/kaptcha?d='+new Date()*1"
+                                             src="/kaptcha?d=1"/>
                                     </div>
                                 </div>
                             </div>
@@ -122,7 +122,7 @@
         </div>
     </div>
     <div class="layui-trans layadmin-user-login-footer">
-        <p>深圳前海清科信息科技有限公司</p>
+        <p></p>
     </div>
 </div>
 <script src="/layuiadmin/layui/layui.js"></script>
@@ -139,7 +139,7 @@
         //提交
         form.on('submit(LAY-user-login-submit)', function (obj) {
             $.ajax({
-                url: '/index/login',
+                url: '/login',
                 type: "post",
                 data: JSON.stringify(obj.field),
                 dataType: "json",
@@ -170,7 +170,7 @@
         var myTimer;
         var checkLogin = function(token){
             $.ajax({
-                url:"/index/verify",
+                url:"/verify",
                 type:"post",
                 data:token,
                 success:function(res){
@@ -195,7 +195,7 @@
         };
         var makeCode = function () {
             $.ajax({
-                url:"/index/getToken",
+                url:"/getToken",
                 type:"get",
                 dataType:"json",
                 success:function (res) {

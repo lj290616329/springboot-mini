@@ -64,34 +64,34 @@
                         yes: function(index, layero){
                             top.layer.close(index);
                             if(res.code == 200){
-                                top.location = "/index/logout"
+                                top.location = "/logout"
                             }else if(res.code == 400){
                                 top.layer.msg(res.msg, {
                                     offset: 't',
                                     anim: 6,
                                 });
                             }else if(res.code == 403){
-                                window.location.href = "/index/403"
+                                window.location.href = "/403"
                             }else if(res.code == -1){
                                 top.layer.msg(res.msg, {
                                     offset: 't',
                                     anim: 6,
                                 }, function(){
-                                    top.window.location.href = "/index/login"
+                                    top.window.location.href = "/login"
                                 });
                             }else if(res.code == 500){
                                 top.layer.msg(res.msg, {
                                     offset: 't',
                                     anim: 6,
                                 }, function(){
-                                    window.location.href = "/index/500"
+                                    window.location.href = "/500"
                                 });
                             }else{
                                 top.layer.msg(res.msg, {
                                     offset: 't',
                                     anim: 6,
                                 }, function(){
-                                    window.location.href = "/index/500"
+                                    window.location.href = "/500"
                                 });
                             }
                         }

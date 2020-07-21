@@ -28,7 +28,7 @@ public class ShiroPermissionsFilter extends PermissionsAuthorizationFilter {
             //返回禁止访问json字符串
             httpServletResponse.getWriter().write("{\"code\":400,\"msg\":\"您没有权限进行访问,请联系管理员\"}");
         } else {//如果是普通请求进行重定向
-            httpServletResponse.sendRedirect("/index/403");
+            httpServletResponse.sendRedirect("/403");
         }
         return false;
     }

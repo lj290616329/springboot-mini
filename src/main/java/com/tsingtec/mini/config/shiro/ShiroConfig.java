@@ -59,17 +59,17 @@ public class ShiroConfig {
 		hashMap.put("perms", new ShiroPermissionsFilter());
 
 		LogoutFilter logoutFilter = new LogoutFilter();
-		logoutFilter.setRedirectUrl("/index/login");
+		logoutFilter.setRedirectUrl("/login");
 
 		hashMap.put("logout", logoutFilter);
 
 		// filterChainDefinitions拦截器=map必须用：LinkedHashMap，因为它必须保证有序
-		shiroFilterFactoryBean.setLoginUrl("/index/login");
+		shiroFilterFactoryBean.setLoginUrl("/login");
 
 		Map<String,String> filterMap = new LinkedHashMap<String,String>();
 
-		filterMap.put("/index/logout","logout");
-		filterMap.put("/index/**", "anon");
+		filterMap.put("/logout","logout");
+		filterMap.put("/**", "anon");
 		filterMap.put("/manager/**", "kickout,authc");
 		filterMap.put("/home/**", "kickout,authc");
 
@@ -172,7 +172,7 @@ public class ShiroConfig {
 		//同一个用户最大的会话数，默认1；比如2的意思是同一个用户允许最多同时两个人登录；
 		kickoutSessionFilter.setMaxSession(1);
 		//被踢出后重定向到的地址；
-		kickoutSessionFilter.setKickoutUrl("/index/login?kickout=1");
+		kickoutSessionFilter.setKickoutUrl("/login?kickout=1");
 		return kickoutSessionFilter;
 	}
 

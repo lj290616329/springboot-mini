@@ -38,37 +38,37 @@ var CoreUtil = {
                             anim: 6,
                         });
                     }else if(res.code == 403){
-                        window.location.href = "/index/403"
+                        window.location.href = "/403"
                     }else if(res.code == -1){
                         top.layer.msg(res.msg, {
                             offset: 't',
                             anim: 6,
                         }, function(){
-                            top.window.location.href = "/index/login"
+                            top.window.location.href = "/login"
                         });
                     }else if(res.code == 500){
                         top.layer.msg(res.msg, {
                             offset: 't',
                             anim: 6,
                         }, function(){
-                            window.location.href = "/index/500"
+                            window.location.href = "/500"
                         });
                     }else{
                         top.layer.msg(res.msg, {
                             offset: 't',
                             anim: 6,
                         }, function(){
-                            window.location.href = "/index/500"
+                            window.location.href = "/500"
                         });
                     }
                 }
             },
             error:function (XMLHttpRequest, textStatus, errorThrown) {
                if(XMLHttpRequest.status==404){
-                    location.href="/index/404";
+                    location.href="/404";
                }else{
                    layer.msg("服务器好像除了点问题！请稍后试试", function(){
-                       window.location.href = "/index/500"
+                       window.location.href = "/500"
                    });
                }
             },

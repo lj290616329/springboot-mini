@@ -73,7 +73,7 @@ public class CSRFFilter implements Filter {
 				resp.getWriter().write("{\"code\":403,\"msg\":\"CSRF--跨站请求伪造。\"}");
 				return;
 			} else {//如果是普通请求进行重定向
-				resp.sendRedirect("/index/login");
+				resp.sendRedirect("/login");
 				return;
 			}
 		}

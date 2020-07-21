@@ -111,22 +111,22 @@
                         laypageTable(res.data.totalRows,searchParam.pageNum);
                         loadTable(res.data.list);
                     }else if(res.code == 400){
-                        location.href = "/index/403"
+                        location.href = "/403"
                     }else if(res.code == -1){
                         layer.msg("凭证过期请重新登录")
-                        top.location = "/index/login"
+                        top.location = "/login"
                     }else if(res.code == 500){
                         layer.msg(res.msg);
-                        location.href = "/index/404"
+                        location.href = "/404"
                     }else{
                         layer.msg(res.msg);
-                        location.href = "/index/404"
+                        location.href = "/404"
                     }
                 },
                 error:function (XMLHttpRequest, textStatus, errorThrown) {
                     layer.close(roleSaveLoading);
                     if(XMLHttpRequest.status==404){
-                        top.window.location.href="/index/404";
+                        top.window.location.href="/404";
                     }else{
                         layer.msg("服务器好像除了点问题！请稍后试试");
                     }

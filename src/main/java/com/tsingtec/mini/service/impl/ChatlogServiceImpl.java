@@ -1,6 +1,9 @@
 package com.tsingtec.mini.service.impl;
 
+import com.google.common.collect.Lists;
+import com.tsingtec.mini.entity.websocket.ChatId;
 import com.tsingtec.mini.entity.websocket.Chatlog;
+import com.tsingtec.mini.repository.ChatIdRepository;
 import com.tsingtec.mini.repository.ChatLogRepository;
 import com.tsingtec.mini.service.ChatlogService;
 import com.tsingtec.mini.utils.BeanMapper;
@@ -24,6 +27,9 @@ public class ChatlogServiceImpl implements ChatlogService {
     @Autowired
     private ChatLogRepository chatLogRepository;
 
+    @Autowired
+    private ChatIdRepository chatIdRepository;
+
     @Override
     public void save(Chatlog chatlog) {
         chatLogRepository.save(chatlog);
@@ -46,13 +52,22 @@ public class ChatlogServiceImpl implements ChatlogService {
         return chatLogRepository.findByFromidAndToidAndStatus(fromid,toid,status);
     }
 
+    private String getChatId(Integer uid,Integer fid){
+        if(uid>fid) return "#"+fid+"#"+uid+"#";
+        return "#"+uid+"#"+fid+"#";
+    }
+
     @Override
-    public List<ChatlogRespVO> getChatLogByChatid(Integer uid, Integer chatid) {
-        List<Chatlog> chatlogs = chatLogRepository.getChatlogByChatidOrderByCreateTimeDesc(chatid);
-        chatlogs.parallelStream().forEach((t)->
-                t.setMine(t.getFromid().equals(uid))
-        );
-        List<ChatlogRespVO> chatlogRespVOS = BeanMapper.mapList(chatlogs, ChatlogRespVO.class);
+    public List<ChatlogRespVO> getChatLogByChatid(Integer uid, Integer fid) {
+        ChatId chatid = chatIdRepository.findByIds(getChatId(uid,fid));
+        List<ChatlogRespVO> chatlogRespVOS = Lists.newArrayList();
+        if(chatid!=null){
+            List<Chatlog> chatlogs = chatLogRepository.getChatlogByChatidOrderByCreateTimeDesc(chatid.getId());
+            chatlogs.parallelStream().forEach((t)->
+                    t.setMine(t.getFromid().equals(uid))
+            );
+            chatlogRespVOS = BeanMapper.mapList(chatlogs, ChatlogRespVO.class);
+        }
         return chatlogRespVOS;
     }
 

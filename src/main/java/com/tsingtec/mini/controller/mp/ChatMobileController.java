@@ -56,9 +56,9 @@ public class ChatMobileController {
      * @param fid
      * @return
      */
-    @GetMapping("/init/{fid}")
+    @GetMapping("/init/{fid}/{mode}")
     @ApiOperation(value = "获取聊天处理器主面板列表信息")
-    public DataResult<ChatInitDataRespVO> init(@PathVariable("fid")Integer fid){
+    public DataResult<ChatInitDataRespVO> init(@PathVariable("fid")Integer fid,@PathVariable("mode")String mode){
         MpUser mpUser =  (MpUser) HttpContextUtils.getHttpServletRequest().getSession().getAttribute("mp_user");
 
         DataResult<ChatInitDataRespVO> result = DataResult.success();
@@ -67,7 +67,7 @@ public class ChatMobileController {
             throw new BusinessException(BaseExceptionType.MINI_ERROR,"对话对象不存在");
         }
         //初始化chatid
-        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,"mobile");
+        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,mode);
 
         //获取对话id
         Integer chatId = chatIdService.getByToidAndFromId(to.getId(),mineRespVO.getId());
@@ -119,17 +119,19 @@ public class ChatMobileController {
     /**
      *
      */
-    @GetMapping("/init")
-    public DataResult<ChatInitDataRespVO> init(){
+    @GetMapping("/init/{mode}")
+    public DataResult<ChatInitDataRespVO> init(@PathVariable("mode")String mode){
         MpUser mpUser =  (MpUser) HttpContextUtils.getHttpServletRequest().getSession().getAttribute("mp_user");
         DataResult<ChatInitDataRespVO> result = DataResult.success();
-        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,"mobile");
+        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,mode);
         List<FriendRespVO> friends = friendService.getByUid(mineRespVO.getId());
         ChatInitDataRespVO chatInitDataRespVO = new ChatInitDataRespVO();
 
         List<MineRespVO> chathistory = Lists.newArrayList();
+
         friends.forEach(friendRespVO -> {
-            chathistory.addAll(friendRespVO.getList());
+            if(null!=friendRespVO.getList())
+                chathistory.addAll(friendRespVO.getList());
         });
         Map<String,MineRespVO> history = Maps.newHashMap();
         chathistory.forEach(s->{
@@ -141,10 +143,12 @@ public class ChatMobileController {
         chatInitDataRespVO.setFriend(friends);
         List<Integer> chatids = chatIdService.getIdByIdsLike(mineRespVO.getId());
 
-        //获取对话内容
-        Map<String,List<ChatlogRespVO>> chatlog = chatlogService.findByChatidInLimit(mineRespVO.getId(),chatids);
+        if(chatids!=null&&chatids.size()>0){
+            //获取对话内容
+            Map<String,List<ChatlogRespVO>> chatlog = chatlogService.findByChatidInLimit(mineRespVO.getId(),chatids);
 
-        chatInitDataRespVO.setChatlog(chatlog);
+            chatInitDataRespVO.setChatlog(chatlog);
+        }
 
         result.setData(chatInitDataRespVO);
         return result;
@@ -193,13 +197,13 @@ public class ChatMobileController {
     }
 
 
-    @GetMapping("/history/{chatId}")
+    @GetMapping("/history/{fid}/{mode}")
     @ApiOperation(value = "获取聊天处理器主面板列表信息")
-    public DataResult<List<ChatlogRespVO>> history(@PathVariable("chatId")Integer chatId){
+    public DataResult<List<ChatlogRespVO>> history(@PathVariable("fid")Integer fid,@PathVariable("mode")String mode){
         DataResult<List<ChatlogRespVO>> result = DataResult.success();
         MpUser mpUser =  (MpUser) HttpContextUtils.getHttpServletRequest().getSession().getAttribute("mp_user");
-        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,"mobile");
-        List<ChatlogRespVO> chatlogRespVOS = chatlogService.getChatLogByChatid(mineRespVO.getId(),chatId);
+        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,mode);
+        List<ChatlogRespVO> chatlogRespVOS = chatlogService.getChatLogByChatid(mineRespVO.getId(),fid);
         result.setData(chatlogRespVOS);
         return result;
     }

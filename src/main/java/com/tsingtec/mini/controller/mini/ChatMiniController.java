@@ -62,9 +62,9 @@ public class ChatMiniController {
      * @param fid
      * @return
      */
-    @GetMapping("/init/{fid}")
+    @GetMapping("/init/{fid}/{mode}")
     @ApiOperation(value = "获取聊天处理器主面板列表信息")
-    public DataResult<ChatInitDataRespVO> init(@PathVariable("fid")Integer fid){
+    public DataResult<ChatInitDataRespVO> init(@PathVariable("fid")Integer fid,@PathVariable("mode")String mode){
         String token = HttpContextUtils.getToken();
         String unionid = jwtUtil.getClaim(token,"unionid");
         MpUser mpUser = mpUserService.findByUnionId(unionid);
@@ -75,7 +75,7 @@ public class ChatMiniController {
             throw new BusinessException(BaseExceptionType.MINI_ERROR,"对话对象不存在");
         }
         //初始化chatid
-        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,"mobile");
+        MineRespVO mineRespVO = friendService.getByUidAndMode(mpUser,mode);
 
         //获取对话id
         Integer chatId = chatIdService.getByToidAndFromId(to.getId(),mineRespVO.getId());

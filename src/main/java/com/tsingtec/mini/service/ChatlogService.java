@@ -31,11 +31,11 @@ public interface ChatlogService {
     List<Chatlog> findByFromidAndToidAndStatus(Integer fromid, Integer toid, Boolean status);
 
     /**
-     * 根据对话id获取聊天记录
-     * @param chatid
+     * 根据好友id获取聊天记录
+     * @param fid
      * @return
      */
-    List<ChatlogRespVO> getChatLogByChatid(Integer uid, Integer chatid);
+    List<ChatlogRespVO> getChatLogByChatid(Integer uid, Integer fid);
 
 
     Map<String,List<ChatlogRespVO>> findByChatids(Integer fromid, List<Integer> chatids);

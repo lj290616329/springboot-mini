@@ -66,6 +66,17 @@ layui.config({
         ,laytpl = layui.laytpl
         ,$ = layui.jquery
         ,cache  = layim.cache();
+
+    var getQueryVariable = function(variable){
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    };
+
     var connect = function (data) {
         var wsUrl = window.location.origin.replace("http","ws")+"/websocket/"+data.mine.id+"/0";
         ws = new ReconnectingWebSocket(wsUrl, null, {debug: true, reconnectInterval: 3000});
@@ -135,7 +146,7 @@ layui.config({
         });
         var chatLog = function(chatId){
             $.ajax({
-                url:'/mobile/chat/history/'+chatId,
+                url:'/mobile/chat/history/'+chatId+"/"+getQueryVariable("type"),
                 type:'get',
                 dataType:'json',
                 success:function(res){
@@ -174,7 +185,7 @@ layui.config({
         layim.showNew("find",false);
     };
     $.ajax({
-        url:'/mobile/chat/init',
+        url:'/mobile/chat/init/'+getQueryVariable("type"),
         type:'get',
         contentType:'application/json; charset=UTF-8',
         dataType:'json',

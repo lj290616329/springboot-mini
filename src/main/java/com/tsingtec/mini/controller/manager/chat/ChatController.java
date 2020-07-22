@@ -62,7 +62,8 @@ public class ChatController {
 
             List<MineRespVO> chathistory = Lists.newArrayList();
             friends.forEach(friendRespVO -> {
-                chathistory.addAll(friendRespVO.getList());
+                if(null!=friendRespVO.getList())
+                    chathistory.addAll(friendRespVO.getList());
             });
             Map<String,MineRespVO> history = Maps.newHashMap();
             chathistory.forEach(s->{
@@ -71,10 +72,12 @@ public class ChatController {
             chatInitDataRespVO.setHistory(history);
             List<Integer> chatids = chatIdService.getIdByIdsLike(mineRespVO.getId());
 
-            //获取对话内容
-            Map<String,List<ChatlogRespVO>> chatlog = chatlogService.findByChatidInLimit(mineRespVO.getId(),chatids);
+            if(chatids!=null&&chatids.size()>0){
+                //获取对话内容
+                Map<String,List<ChatlogRespVO>> chatlog = chatlogService.findByChatidInLimit(mineRespVO.getId(),chatids);
 
-            chatInitDataRespVO.setChatlog(chatlog);
+                chatInitDataRespVO.setChatlog(chatlog);
+            }
 
             chatInitDataRespVO.setMine(mineRespVO);
             chatInitDataRespVO.setFriend(friends);

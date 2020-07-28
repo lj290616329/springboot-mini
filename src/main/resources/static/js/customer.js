@@ -123,7 +123,7 @@ layui.use(['layim','upload','CoreUtil'],function(){
     };
     //获取基本数据
     CoreUtil.sendAjax("/manager/chat/init",{},function (res) {
-        if(res.code==0){
+        if(res.data!=null){
             init_im(res.data);
         }
     },"GET",'application/json; charset=UTF-8',false);

@@ -82,9 +82,6 @@ public class ChatController {
             chatInitDataRespVO.setMine(mineRespVO);
             chatInitDataRespVO.setFriend(friends);
             result.setData(chatInitDataRespVO);
-        }else{
-            //返回非0的code
-            result.setCode(1);
         }
         return result;
     }

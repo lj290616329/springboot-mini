@@ -70,8 +70,8 @@ public class ShiroConfig {
 
 		filterMap.put("/logout","logout");
 		filterMap.put("/**", "anon");
-		filterMap.put("/manager/**", "kickout,authc");
-		filterMap.put("/home/**", "kickout,authc");
+		filterMap.put("/manager/**", "kickout");
+		filterMap.put("/home/**", "kickout");
 
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
 		shiroFilterFactoryBean.setFilters(hashMap);

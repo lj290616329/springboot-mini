@@ -64,7 +64,7 @@ public class KickoutSessionFilter extends AccessControlFilter {
 	@Override
 	protected boolean onAccessDenied(ServletRequest request,
 			ServletResponse response) throws Exception {
-		log.debug("come kickout");
+		log.info("come kickout");
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		String header = httpServletRequest.getHeader("X-Requested-With");
@@ -76,32 +76,33 @@ public class KickoutSessionFilter extends AccessControlFilter {
 			//判断是不是Ajax请求，异步请求，直接响应返回未登录
 			if (isAjax) {
 				httpServletResponse.setCharacterEncoding("UTF-8");
-				log.debug(getClass().getName()+ "当前用户已经在其他地方登录，并且是Ajax请求！");
-				httpServletResponse.getWriter().write("{\"code\":-1,\"msg\":\"您已在别处登录，请您修改密码或重新登录！\"}");
+				log.info(getClass().getName()+ "当前用户已经在其他地方登录，并且是Ajax请求！");
+				httpServletResponse.getWriter().write("{\"code\":-1,\"msg\":\"您的登录状态已过期,请重新登录！\"}");
 				return false;
 			}else{
-				return true;
+				WebUtils.issueRedirect(request, response, "/");
+				return false;
 			}
 		}
 		// 获得用户请求的URI
 		HttpServletRequest req=(HttpServletRequest) request;
 		String path = req.getRequestURI();
-		log.debug("===当前请求的uri：==" + path);
+		log.info("===当前请求的uri：==" + path);
 		//String contextPath = req.getContextPath();
 		//log.debug("===当前请求的域名或ip+端口：==" + contextPath);
 		Session session = subject.getSession();
-		log.debug("==session时间设置：" + String.valueOf(session.getTimeout())
+		log.info("==session时间设置：" + String.valueOf(session.getTimeout())
 				+ "===========");
 		try {
 			// 当前用户
 			Admin user = (Admin) subject.getPrincipal();
 			String loginName = user.getLoginName();
-			log.debug("===当前用户username：==" + loginName);
+			log.info("===当前用户username：==" + loginName);
 			Serializable sessionId = session.getId();
-			log.debug("===当前用户sessionId：==" + sessionId);
+			log.info("===当前用户sessionId：==" + sessionId);
 			// 读取缓存用户 没有就存入
 			Deque<Serializable> deque = cache.get(loginName);
-			log.debug("===当前deque：==" + deque);
+			log.info("===当前deque：==" + deque);
 			if (deque == null) {
 				// 初始化队列
 				deque = new ArrayDeque<Serializable>();
@@ -148,7 +149,7 @@ public class KickoutSessionFilter extends AccessControlFilter {
 				} catch (Exception e) { // ignore
 				}
 				saveRequest(request);
-				log.debug("==踢出后用户重定向的路径kickoutUrl:" + kickoutUrl);
+				log.info("==踢出后用户重定向的路径kickoutUrl:" + kickoutUrl);
 				// ajax请求
 				// 重定向
 				//WebUtils.issueRedirect(request, response, kickoutUrl);
@@ -156,7 +157,7 @@ public class KickoutSessionFilter extends AccessControlFilter {
 			}
 			return true;
 		} catch (Exception e) { // ignore
-			log.debug("控制用户在线数量【lyd-admin-->KickoutSessionFilter.onAccessDenied】异常！",e);
+			log.info("控制用户在线数量【lyd-admin-->KickoutSessionFilter.onAccessDenied】异常！",e);
 			// 重启后，ajax请求，报错：java.lang.ClassCastException:
 			// com.lyd.admin.pojo.AdminUser cannot be cast to
 			// com.lyd.admin.pojo.AdminUser
@@ -181,7 +182,7 @@ public class KickoutSessionFilter extends AccessControlFilter {
 
 		if (isAjax) {
 			httpServletResponse.setCharacterEncoding("UTF-8");
-			log.debug(getClass().getName()+ "当前用户已经在其他地方登录，并且是Ajax请求！");
+			log.info(getClass().getName()+ "当前用户已经在其他地方登录，并且是Ajax请求！");
 			httpServletResponse.getWriter().write("{\"code\":-1,\"msg\":\"您已在别处登录，请您修改密码或重新登录！\"}");
 		}else{
 			// 重定向
@@ -189,5 +190,4 @@ public class KickoutSessionFilter extends AccessControlFilter {
 		}
 		return false;
 	}
-
 }
